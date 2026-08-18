@@ -1,0 +1,700 @@
+/* ==========================================================================
+   San Jose FORCE — sanjoseforce.com
+   Club site stylesheet. Built to the standard league club-site template.
+   Brand palette is locked; do not alter without Brand Governance approval.
+   ========================================================================== */
+
+:root{
+  /* Approved club colours */
+  --force-blue:      #0175A2;   /* FORCE Blue      PMS 7461 C */
+  --force-cyan:      #0298C7;   /* Horizon Blue    PMS 632 C  */
+  --force-green:     #78B225;   /* Community Green PMS 368 C  */
+  --force-lime:      #DDE91E;   /* Optimism Yellow PMS 388 C  */
+  --force-navy:      #0B2E3D;
+  --force-char:      #343434;
+
+  --ink:      #14181c;
+  --ink-2:    #4a5560;
+  --ink-3:    #78848f;
+  --rule:     #e2e6ea;
+  --rule-2:   #eef1f4;
+  --bg:       #ffffff;
+  --bg-alt:   #f4f6f8;
+
+  --wrap: 1264px;
+  --gut: 24px;
+
+  --hd: 'Barlow Condensed','Archivo Narrow','Arial Narrow',Impact,sans-serif;
+  --ui: 'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+
+  --shadow-1: 0 1px 2px rgba(20,24,28,.06), 0 2px 8px rgba(20,24,28,.06);
+  --shadow-2: 0 4px 12px rgba(20,24,28,.10), 0 12px 32px rgba(20,24,28,.10);
+}
+
+*,*::before,*::after{ box-sizing:border-box }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto } }
+/* Clear the sticky masthead when jumping to an in-page anchor. */
+[id]{ scroll-margin-top:92px }
+@media (max-width:600px){ [id]{ scroll-margin-top:80px } }
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--ui); font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+img{ max-width:100%; height:auto; display:block }
+a{ color:inherit; text-decoration:none }
+button{ font:inherit }
+
+.wrap{ max-width:var(--wrap); margin:0 auto; padding:0 var(--gut) }
+.wrap-narrow{ max-width:800px; margin:0 auto; padding:0 var(--gut) }
+
+/* ---------- Utility bar ------------------------------------------------- */
+.utility{ background:#0a0d10; color:#fff }
+.utility .wrap{ display:flex; align-items:center; gap:22px; height:34px }
+.utility a{
+  font-size:11px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+  color:rgba(255,255,255,.72);
+}
+.utility a:hover{ color:#fff }
+.utility .shield{
+  font-family:var(--hd); font-size:13px; font-weight:800; letter-spacing:.04em;
+  color:#fff; padding-right:20px; margin-right:2px; white-space:nowrap; flex:0 0 auto;
+  border-right:1px solid rgba(255,255,255,.16);
+}
+.utility .spacer{ margin-left:auto }
+
+/* ---------- Masthead ---------------------------------------------------- */
+.masthead{
+  background:#fff; border-bottom:1px solid var(--rule);
+  position:sticky; top:0; z-index:60;
+}
+.masthead .wrap{ display:flex; align-items:center; height:76px; gap:28px }
+.brand{ display:flex; align-items:center; gap:12px; flex:0 0 auto }
+.brand img{ height:54px; width:auto }
+.brand .wordmark{
+  font-family:var(--hd); text-transform:uppercase; line-height:.94;
+  font-weight:800; letter-spacing:.01em;
+}
+.brand .wordmark .city{ display:block; font-size:13px; color:var(--ink-3); letter-spacing:.16em }
+.brand .wordmark .name{ display:block; font-size:27px; color:var(--force-blue) }
+
+.mainnav{ display:flex; align-items:center; gap:2px; margin-left:4px }
+.mainnav a{
+  position:relative; padding:28px 12px; font-size:13px; font-weight:700;
+  letter-spacing:.075em; text-transform:uppercase; color:var(--ink);
+}
+.mainnav a::after{
+  content:''; position:absolute; left:12px; right:12px; bottom:22px; height:3px;
+  background:var(--force-blue); transform:scaleX(0); transition:transform .16s ease;
+}
+.mainnav a:hover::after, .mainnav a[aria-current="page"]::after{ transform:scaleX(1) }
+.mainnav a[aria-current="page"]{ color:var(--force-blue) }
+
+.mast-actions{ margin-left:auto; display:flex; align-items:center; gap:10px }
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:40px; padding:0 20px; border-radius:2px; border:2px solid transparent;
+  font-size:12.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase;
+  cursor:pointer; transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.btn-primary{ background:var(--force-blue); color:#fff }
+.btn-primary:hover{ background:#01628a }
+.btn-ghost{ border-color:var(--rule); color:var(--ink) }
+.btn-ghost:hover{ border-color:var(--force-blue); color:var(--force-blue) }
+.btn-lime{ background:var(--force-lime); color:var(--force-navy) }
+.btn-lime:hover{ background:#c9d515 }
+.btn-white{ background:#fff; color:var(--force-blue) }
+.btn-outline-white{ border-color:rgba(255,255,255,.55); color:#fff }
+.btn-outline-white:hover{ border-color:#fff; background:rgba(255,255,255,.1) }
+.btn-sm{ height:34px; padding:0 15px; font-size:11.5px }
+.btn-lg{ height:50px; padding:0 32px; font-size:14px }
+
+.mast-toggle{ display:none; margin-left:auto; background:none; border:0; padding:8px; cursor:pointer }
+.mast-toggle span{ display:block; width:24px; height:2px; background:var(--ink); margin:5px 0 }
+
+/* ---------- Game strip / score rows -------------------------------------- */
+/* The dark bar shell is shared by the countdown and the season-recap games. */
+.gamestrip{ background:var(--force-navy); color:#fff }
+.gamestrip .wrap{ display:flex; align-items:stretch; overflow-x:auto; scrollbar-width:none }
+.gamestrip .wrap::-webkit-scrollbar{ display:none }
+.gs-meta{
+  font-size:10.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(255,255,255,.55); margin-bottom:7px;
+}
+.gs-row{ display:flex; align-items:center; gap:9px; font-size:13.5px; font-weight:600; line-height:1.85 }
+.gs-row .abbr{ width:38px; font-weight:800; letter-spacing:.04em }
+.gs-row .score{ margin-left:auto; font-family:var(--hd); font-size:20px; font-weight:800 }
+.gs-row.win .score{ color:var(--force-lime) }
+.gs-row.loss{ color:rgba(255,255,255,.5) }
+.gs-dot{ width:20px; height:20px; border-radius:50%; flex:0 0 auto }
+
+/* ---------- Countdown ---------------------------------------------------- */
+.gamestrip.countdown-bar .wrap{
+  align-items:center; gap:28px; padding-top:18px; padding-bottom:18px;
+}
+.cd-label{ flex:0 0 auto; white-space:nowrap }
+.cd-eyebrow{
+  display:block; font-size:10.5px; font-weight:800; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--force-lime); margin-bottom:5px;
+}
+.cd-title{
+  display:block; font-family:var(--hd); font-size:23px; font-weight:800;
+  letter-spacing:.04em; text-transform:uppercase; line-height:1;
+}
+.cd-date{
+  display:block; margin-top:6px; font-size:12.5px; font-weight:600;
+  color:rgba(255,255,255,.62);
+}
+.countdown{
+  display:flex; gap:1px; background:rgba(255,255,255,.16);
+  border-radius:2px; overflow:hidden; flex:0 0 auto;
+}
+.cd-unit{
+  background:var(--force-navy); padding:10px 0 9px; min-width:64px;
+  display:flex; flex-direction:column; align-items:center;
+}
+.cd-num{
+  font-family:var(--hd); font-size:30px; font-weight:800; line-height:1;
+  color:var(--force-lime); font-variant-numeric:tabular-nums;
+}
+.cd-unit-label{
+  margin-top:6px; font-size:9.5px; font-weight:800; letter-spacing:.11em;
+  text-transform:uppercase; color:rgba(255,255,255,.5);
+}
+.gamestrip.countdown-bar .btn{ margin-left:auto; flex:0 0 auto }
+
+/* ---------- Season recap ------------------------------------------------- */
+.recap-block{ display:grid; gap:1px; background:rgba(255,255,255,.16) }
+.recap-games{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px }
+.recap-game{ background:var(--force-navy); padding:20px 22px }
+.recap-game .gs-meta{ margin-bottom:11px }
+.recap-block .stats{ background:transparent }
+.pill-lime{ background:rgba(221,233,30,.16); color:var(--force-lime) }
+
+/* ---------- Section furniture ------------------------------------------- */
+.section{ padding:52px 0 }
+.section.tight{ padding:36px 0 }
+.section.alt{ background:var(--bg-alt) }
+.section.dark{ background:var(--force-navy); color:#fff }
+
+.sec-head{
+  /* Baseline, not flex-end: these items have very different box heights (the
+     sponsor chip is padded + bordered), so aligning boxes leaves their text on
+     four different lines. Baseline puts the type itself on one line. */
+  display:flex; align-items:baseline; gap:20px;
+  padding-bottom:14px; margin-bottom:26px; border-bottom:2px solid var(--ink);
+}
+.section.dark .sec-head{ border-bottom-color:rgba(255,255,255,.28) }
+.sec-head h2{
+  margin:0; font-family:var(--hd); font-size:31px; font-weight:800;
+  letter-spacing:.045em; text-transform:uppercase; line-height:1;
+}
+/* Only inside a section header — the hero/pagehead lockups stay centred. */
+.sec-head .presented{ margin-left:auto; align-items:baseline }
+/* A pill is a padded box, not type: baseline-aligning it makes it hang low.
+   Centre it on the heading instead. Plain text siblings keep the baseline. */
+.sec-head .pill{ align-self:center }
+.sec-head .more{
+  font-size:12px; font-weight:800; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--force-blue); white-space:nowrap;
+}
+.section.dark .sec-head .more{ color:var(--force-lime) }
+.sec-head .more:hover{ text-decoration:underline }
+
+.presented{
+  display:flex; align-items:center; gap:9px;
+  font-size:10px; font-weight:700; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--ink-3); white-space:nowrap;
+}
+.section.dark .presented, .hero .presented, .pagehead .presented{ color:rgba(255,255,255,.62) }
+.presented .sponsor{
+  font-family:var(--hd); font-size:16px; font-weight:800; letter-spacing:.03em;
+  color:var(--ink-2); padding:3px 9px; border:1px solid var(--rule);
+  border-radius:2px; background:#fff;
+}
+.section.dark .presented .sponsor,
+.hero .presented .sponsor,
+.pagehead .presented .sponsor{ color:var(--force-navy) }
+
+.eyebrow{
+  font-size:11px; font-weight:800; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--force-blue);
+}
+.eyebrow.on-dark{ color:var(--force-lime) }
+
+.eyebrow-row{ display:flex; align-items:center; gap:20px; flex-wrap:wrap }
+.eyebrow-row .presented{ margin-left:auto; margin-bottom:0 }
+
+/* ---------- Hero -------------------------------------------------------- */
+.hero{ position:relative; background:var(--force-navy); color:#fff; overflow:hidden }
+.hero-media{ position:absolute; inset:0 }
+.hero-media img{ width:100%; height:100%; object-fit:cover; opacity:.9 }
+.hero-media::after{
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(6,20,28,.94) 6%, rgba(6,20,28,.62) 44%, rgba(6,20,28,.15) 88%);
+}
+.hero .wrap{ position:relative; z-index:2; min-height:512px; display:flex; flex-direction:column; justify-content:flex-end; padding-top:44px; padding-bottom:38px }
+.hero h1{
+  margin:12px 0 14px; max-width:19ch;
+  font-family:var(--hd); font-weight:800; text-transform:uppercase;
+  font-size:clamp(34px,5vw,62px); line-height:.98; letter-spacing:.01em;
+}
+/* The headline carries the click on its own — no CTA button beneath it. */
+.hero h1 a{ text-decoration-color:transparent; transition:text-decoration-color .15s ease }
+.hero h1 a:hover{ text-decoration:underline; text-decoration-thickness:3px; text-underline-offset:6px }
+.hero .dek{ max-width:60ch; font-size:17px; color:rgba(255,255,255,.82); margin:0 0 20px }
+.hero .byline{ font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:rgba(255,255,255,.6) }
+.hero .presented{ margin-bottom:2px }
+
+/* ---------- Cards ------------------------------------------------------- */
+.grid{ display:grid; gap:26px }
+.g2{ grid-template-columns:repeat(2,1fr) }
+.g3{ grid-template-columns:repeat(3,1fr) }
+.g4{ grid-template-columns:repeat(4,1fr) }
+
+.card{ display:flex; flex-direction:column; background:#fff }
+.card .thumb{
+  position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--bg-alt);
+  border-radius:2px;
+}
+.card .thumb img{ width:100%; height:100%; object-fit:cover; transition:transform .3s ease }
+.card:hover .thumb img{ transform:scale(1.035) }
+.card .tag{
+  position:absolute; left:0; bottom:0; background:var(--force-blue); color:#fff;
+  font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:6px 11px;
+}
+.card .tag.green{ background:var(--force-green) }
+.card .tag.lime{ background:var(--force-lime); color:var(--force-navy) }
+.card h3{
+  margin:13px 0 6px; font-size:17.5px; font-weight:700; line-height:1.28; letter-spacing:-.005em;
+}
+.card:hover h3{ color:var(--force-blue) }
+.card p{ margin:0 0 10px; font-size:14px; color:var(--ink-2); line-height:1.5 }
+.card .meta{
+  margin-top:auto; font-size:11px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-3);
+}
+.section.dark .card{ background:transparent; color:#fff }
+.section.dark .card p{ color:rgba(255,255,255,.72) }
+.section.dark .card .meta{ color:rgba(255,255,255,.5) }
+.section.dark .card:hover h3{ color:var(--force-lime) }
+
+.card-lead h3{ font-size:26px; font-family:var(--hd); font-weight:800; text-transform:uppercase; letter-spacing:.02em; line-height:1.06 }
+
+/* Headline list */
+.headlines{ list-style:none; margin:0; padding:0; border-top:1px solid var(--rule) }
+.headlines li{ border-bottom:1px solid var(--rule) }
+.headlines a,
+.headlines .fact{ display:block; padding:15px 0 }
+.headlines a:hover h4{ color:var(--force-blue) }
+.headlines h4{ margin:0 0 5px; font-size:16px; font-weight:700; line-height:1.32 }
+.headlines .meta{ font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3) }
+
+/* ---------- Promo band -------------------------------------------------- */
+.promo{
+  position:relative; overflow:hidden; color:#fff; background:var(--force-blue);
+  border-radius:2px;
+}
+.promo img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.42 }
+.promo .inner{
+  position:relative; z-index:2; padding:46px 44px;
+  display:flex; align-items:center; gap:34px; flex-wrap:wrap;
+}
+.promo h3{
+  margin:8px 0 8px; font-family:var(--hd); font-size:clamp(28px,3.4vw,42px);
+  font-weight:800; text-transform:uppercase; line-height:1; letter-spacing:.02em;
+}
+.promo p{ margin:0; max-width:56ch; color:rgba(255,255,255,.86); font-size:15px }
+.promo .promo-cta{ margin-left:auto; display:flex; gap:12px; flex-wrap:wrap }
+
+/* ---------- Tables ------------------------------------------------------ */
+.table{ width:100%; border-collapse:collapse; font-size:14px; background:#fff }
+.table th{
+  text-align:left; padding:11px 14px; background:var(--force-navy); color:#fff;
+  font-size:11px; font-weight:800; letter-spacing:.09em; text-transform:uppercase;
+  white-space:nowrap;
+}
+.table td{ padding:12px 14px; border-bottom:1px solid var(--rule) }
+.table tbody tr:nth-child(odd){ background:#fafbfc }
+.table tbody tr:hover{ background:#eff7fb }
+.table .num{ text-align:center; font-variant-numeric:tabular-nums }
+.table .w{ color:var(--force-green); font-weight:800 }
+.table .l{ color:#b23b3b; font-weight:800 }
+.table-scroll{ overflow-x:auto; border:1px solid var(--rule); border-radius:2px }
+.table caption{
+  caption-side:top; text-align:left; padding:0 0 10px;
+  font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3);
+}
+
+/* ---------- Stat strip -------------------------------------------------- */
+.stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(255,255,255,.18) }
+.stats .stat{ background:var(--force-navy); padding:26px 20px; text-align:center }
+.stats .stat .v{
+  font-family:var(--hd); font-size:46px; font-weight:800; line-height:1; color:var(--force-lime);
+}
+.stats .stat .k{
+  margin-top:9px; font-size:11px; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; color:rgba(255,255,255,.7);
+}
+
+/* ---------- Article ----------------------------------------------------- */
+.article-body{ font-size:18px; line-height:1.72; color:#22282e }
+.article-body p{ margin:0 0 1.15em }
+.article-body h2{
+  margin:1.7em 0 .55em; font-family:var(--hd); font-size:28px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.03em;
+}
+.article-body h3{ margin:1.5em 0 .5em; font-size:20px; font-weight:800 }
+.article-body ul{ margin:0 0 1.15em; padding-left:1.2em }
+.article-body li{ margin-bottom:.45em }
+.article-body blockquote{
+  margin:1.5em 0; padding:4px 0 4px 24px; border-left:4px solid var(--force-green);
+  font-size:21px; line-height:1.5; font-weight:500; color:var(--ink);
+}
+.article-body blockquote cite{
+  display:block; margin-top:12px; font-size:12px; font-style:normal; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3);
+}
+.article-body .boiler{
+  margin-top:2.4em; padding-top:22px; border-top:1px solid var(--rule);
+  font-size:14px; line-height:1.62; color:var(--ink-2);
+}
+.article-body .boiler h4{
+  margin:0 0 6px; font-size:12px; font-weight:800; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink);
+}
+.article-body .boiler p{ margin:0 0 1em }
+.share{ display:flex; align-items:center; gap:10px; margin:26px 0 0 }
+.share span{ font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3) }
+/* Icons are self-contained circular badges (own fill + glyph), not bare
+   glyphs — no button chrome of our own, just the 34x34 slot and a hover cue. */
+.share a,
+.share button{
+  width:34px; height:34px; border-radius:50%; border:0; padding:0;
+  display:flex; align-items:center; justify-content:center;
+  background:none; cursor:pointer;
+}
+.share a img,
+.share button img{
+  width:100%; height:100%; border-radius:50%;
+  transition:transform .15s ease, opacity .15s ease;
+}
+.share a:hover img,
+.share button:hover img{ transform:scale(1.08); opacity:.85 }
+.share button.is-copied img{ box-shadow:0 0 0 2px var(--force-green); transform:none; opacity:1 }
+
+/* ---------- Page header (interior) -------------------------------------- */
+.pagehead{ background:var(--force-navy); color:#fff; position:relative; overflow:hidden }
+.pagehead img.bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.3 }
+.pagehead .wrap{ position:relative; z-index:2; padding:44px 24px 40px }
+.pagehead h1{
+  margin:10px 0 0; font-family:var(--hd); font-size:clamp(34px,4.6vw,54px);
+  font-weight:800; text-transform:uppercase; line-height:1; letter-spacing:.02em;
+}
+.pagehead p{ margin:14px 0 0; max-width:66ch; color:rgba(255,255,255,.8); font-size:16px }
+
+/* ---------- Sponsor rail ------------------------------------------------ */
+.rail{ border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); background:#fff }
+.rail .wrap{ display:flex; align-items:center; gap:34px; flex-wrap:wrap; padding-top:22px; padding-bottom:22px }
+.rail .lbl{
+  font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+}
+.rail .logo{
+  font-family:var(--hd); font-size:19px; font-weight:700; letter-spacing:.05em;
+  text-transform:uppercase; color:#9aa5ae; transition:color .15s ease;
+}
+.rail .logo:hover{ color:var(--ink-2) }
+
+/* ---------- Shop -------------------------------------------------------- */
+.shop-perks{ border-bottom:1px solid var(--rule); background:var(--bg-alt) }
+.shop-perks .wrap{
+  display:flex; flex-wrap:wrap; gap:10px 40px; justify-content:center;
+  padding-top:14px; padding-bottom:14px;
+  font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-2);
+}
+
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px }
+.chip{
+  padding:9px 16px; border:1px solid var(--rule); border-radius:999px; background:#fff;
+  font-size:11.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-2); cursor:pointer; transition:all .15s ease;
+}
+.chip:hover{ border-color:var(--force-blue); color:var(--force-blue) }
+.chip[aria-pressed="true"]{
+  background:var(--force-blue); border-color:var(--force-blue); color:#fff;
+}
+
+.shop-count{
+  font-size:12px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--ink-3); margin-bottom:18px;
+}
+
+.prod-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:26px }
+.prod{ display:flex; flex-direction:column }
+.prod[hidden]{ display:none }
+.prod-media{
+  position:relative; aspect-ratio:1/1; overflow:hidden; border-radius:2px;
+  border:1px solid var(--rule); background:var(--bg-alt);
+}
+.prod-media img{ width:100%; height:100%; object-fit:cover; transition:transform .3s ease }
+.prod:hover .prod-media img{ transform:scale(1.035) }
+/* Solid-colour stand-in used until a product photo exists. */
+.prod-badge{
+  position:absolute; top:10px; left:10px; background:var(--force-lime); color:var(--force-navy);
+  font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 10px; border-radius:2px;
+}
+.prod-name{ margin-top:13px; font-size:15px; font-weight:700; line-height:1.35 }
+.prod-meta{
+  margin-top:5px; font-size:11px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-3);
+}
+.prod-price{ margin-top:7px; font-size:15px; font-weight:800; color:var(--ink) }
+
+/* ---------- Footer ------------------------------------------------------ */
+.footer{ background:#0a1218; color:rgba(255,255,255,.72); font-size:13px }
+.footer a:hover{ color:#fff }
+.foot-top{ padding:44px 0 34px; border-bottom:1px solid rgba(255,255,255,.1) }
+.foot-top .wrap{ display:flex; gap:40px; flex-wrap:wrap; align-items:flex-start }
+.foot-brand{ flex:0 0 250px }
+.foot-brand img{ height:64px; width:auto; margin-bottom:14px }
+.foot-brand p{ margin:0; font-size:12.5px; line-height:1.6; color:rgba(255,255,255,.55) }
+.foot-cols{ flex:1; display:grid; grid-template-columns:repeat(4,1fr); gap:32px }
+.foot-cols h5{
+  margin:0 0 13px; font-size:11px; font-weight:800; letter-spacing:.11em;
+  text-transform:uppercase; color:#fff;
+}
+.foot-cols ul{ list-style:none; margin:0; padding:0 }
+.foot-cols li{ margin-bottom:8px; font-size:12.5px; color:rgba(255,255,255,.6) }
+
+.foot-legal{ padding:22px 0 34px }
+.foot-legal .links{
+  display:flex; flex-wrap:wrap; gap:8px 18px; margin-bottom:14px;
+  font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  color:rgba(255,255,255,.55);
+}
+.foot-legal .fine{ font-size:11px; line-height:1.65; color:rgba(255,255,255,.36); max-width:96ch }
+.foot-legal .fine strong{ color:rgba(255,255,255,.55) }
+
+/* ---------- Misc -------------------------------------------------------- */
+.pill{
+  display:inline-block; padding:5px 11px; border-radius:999px;
+  font-size:10.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase;
+}
+.pill-blue{ background:rgba(1,117,162,.1); color:var(--force-blue) }
+.pill-green{ background:rgba(120,178,37,.16); color:#4b7715 }
+.pill-grey{ background:var(--bg-alt); color:var(--ink-2) }
+
+.notice{
+  background:#fffbe6; border:1px solid #f0e2a8; border-left:4px solid var(--force-lime);
+  padding:15px 18px; font-size:13.5px; line-height:1.55; color:#5b4f16; border-radius:2px;
+}
+
+.split{ display:grid; grid-template-columns:2fr 1fr; gap:44px; align-items:start }
+.sidebar h3{
+  margin:0 0 14px; padding-bottom:11px; border-bottom:2px solid var(--ink);
+  font-family:var(--hd); font-size:22px; font-weight:800; letter-spacing:.05em; text-transform:uppercase;
+}
+.sidebar + .sidebar{ margin-top:36px }
+
+.faq{ border-top:1px solid var(--rule) }
+.faq details{ border-bottom:1px solid var(--rule) }
+.faq summary{
+  padding:16px 0; cursor:pointer; font-size:16px; font-weight:700; list-style:none;
+  display:flex; align-items:center; gap:12px;
+}
+.faq summary::-webkit-details-marker{ display:none }
+.faq summary::after{ content:'+'; margin-left:auto; font-size:22px; font-weight:400; color:var(--force-blue) }
+.faq details[open] summary::after{ content:'\2013' }
+.faq .ans{ padding:0 0 18px; font-size:15px; line-height:1.62; color:var(--ink-2); max-width:80ch }
+
+/* ---------- Prose helpers ----------------------------------------------- */
+.lede{ font-size:17px; line-height:1.68; color:var(--ink-2) }
+.lede.measure{ max-width:62ch }
+.colhead{
+  margin:0 0 12px; font-family:var(--hd); font-size:22px;
+  text-transform:uppercase; letter-spacing:.05em;
+}
+.display{
+  margin:10px 0 16px; font-family:var(--hd); font-size:36px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.03em; line-height:1.04;
+}
+.display.lg{ font-size:38px; line-height:1.02 }
+.legal-date{
+  font-size:13px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-3);
+}
+
+/* ---------- Ticket tiers ------------------------------------------------ */
+.tier{
+  display:flex; flex-direction:column; position:relative;
+  border:1px solid var(--rule); border-radius:2px; background:#fff;
+  padding:26px 22px 22px;
+}
+.tier::before{
+  content:''; position:absolute; top:-1px; left:-1px; right:-1px; height:4px;
+  border-radius:2px 2px 0 0; background:var(--force-blue);
+}
+.tier.t-cyan::before  { background:var(--force-cyan) }
+.tier.t-green::before { background:var(--force-green) }
+.tier.t-navy::before  { background:var(--force-navy) }
+
+.tier .eyebrow{ margin-bottom:8px }
+.tier h3{
+  margin:0 0 10px; font-family:var(--hd); font-size:25px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.03em; line-height:1.06; color:var(--ink);
+}
+.tier > p{ margin:0 0 16px; font-size:14.5px; line-height:1.6; color:var(--ink-2) }
+
+.tier-list{ margin:0 0 20px; padding:0; list-style:none; border-top:1px solid var(--rule-2) }
+.tier-list li{
+  position:relative; padding:9px 0 9px 22px; font-size:14px; line-height:1.45;
+  color:var(--ink-2); border-bottom:1px solid var(--rule-2);
+}
+.tier-list li::before{
+  content:''; position:absolute; left:4px; top:15px; width:7px; height:7px;
+  border-radius:50%; background:var(--force-green);
+}
+
+.tier-foot{ margin-top:auto }
+.tier-price{ display:flex; align-items:baseline; gap:7px; margin-bottom:14px }
+.tier-price .v{
+  font-family:var(--hd); font-size:34px; font-weight:800; letter-spacing:.02em;
+  line-height:1; color:var(--force-blue);
+}
+.tier-price .k{
+  font-size:11px; font-weight:800; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--ink-3);
+}
+.tier-foot .btn{ width:100% }
+
+/* ---------- Preference modals ------------------------------------------- */
+.modal-scrim{
+  position:fixed; inset:0; z-index:600; display:flex;
+  align-items:center; justify-content:center; padding:24px;
+  background:rgba(11,46,61,.62);
+}
+.modal-scrim[hidden]{ display:none }
+.modal{
+  background:#fff; border-radius:3px; box-shadow:var(--shadow-2);
+  width:100%; max-width:660px; max-height:calc(100vh - 48px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.modal-head{
+  position:relative; flex:0 0 auto;
+  padding:24px 58px 22px 28px; border-bottom:1px solid var(--rule);
+}
+.modal-head h2{
+  margin:8px 0 0; font-family:var(--hd); font-size:28px; font-weight:800;
+  letter-spacing:.03em; text-transform:uppercase; line-height:1.06;
+}
+.modal-close{
+  position:absolute; top:18px; right:18px; width:32px; height:32px;
+  display:flex; align-items:center; justify-content:center;
+  background:none; border:0; border-radius:2px; cursor:pointer;
+  font-size:22px; line-height:1; color:var(--ink-3);
+}
+.modal-close:hover{ background:var(--bg-alt); color:var(--ink) }
+.modal-body{ flex:1 1 auto; overflow-y:auto; padding:22px 28px 26px }
+.modal-body p{ margin:0 0 16px; font-size:14.5px; line-height:1.62; color:var(--ink-2) }
+.modal-body p:last-child{ margin-bottom:0 }
+.modal-body a{ color:var(--force-blue); text-decoration:underline }
+
+.modal-foot{
+  flex:0 0 auto; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  padding:18px 28px; border-top:1px solid var(--rule); background:var(--bg-alt);
+}
+.modal-foot .btn{ height:42px }
+.modal-foot .spacer{ margin-left:auto }
+
+/* Cookie preference categories */
+.pref{ border-top:1px solid var(--rule); padding:18px 0 }
+.pref:first-of-type{ border-top:0; padding-top:4px }
+.pref-row{ display:flex; align-items:flex-start; gap:16px }
+.pref-row h3{
+  margin:0; font-size:15px; font-weight:800; letter-spacing:.01em; color:var(--ink);
+}
+.pref-row p{ margin:7px 0 0; font-size:13.5px; line-height:1.6; color:var(--ink-2) }
+.pref-state{
+  flex:0 0 auto; margin-left:auto; display:flex; align-items:center; gap:10px;
+  font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--force-green);
+}
+.pref-locked{ color:var(--ink-3) }
+
+.toggle{
+  position:relative; flex:0 0 auto; width:44px; height:24px;
+  background:none; border:0; padding:0; cursor:pointer;
+}
+.toggle::before{
+  content:''; position:absolute; inset:0; border-radius:999px;
+  background:var(--rule); transition:background .16s ease;
+}
+.toggle::after{
+  content:''; position:absolute; top:3px; left:3px; width:18px; height:18px;
+  border-radius:50%; background:#fff; box-shadow:var(--shadow-1);
+  transition:transform .16s ease;
+}
+.toggle[aria-checked="true"]::before{ background:var(--force-green) }
+.toggle[aria-checked="true"]::after{ transform:translateX(20px) }
+.toggle[aria-disabled="true"]{ cursor:default; opacity:.55 }
+.toggle:focus-visible{ outline:2px solid var(--force-blue); outline-offset:3px; border-radius:999px }
+
+/* ---------- Responsive -------------------------------------------------- */
+@media (max-width:1080px){
+  .mainnav{ display:none }
+  .mast-toggle{ display:block }
+  .masthead.open .mainnav{
+    display:flex; flex-direction:column; align-items:stretch;
+    position:absolute; top:100%; left:0; right:0; margin:0; padding:6px 0;
+    background:#fff; border-bottom:1px solid var(--rule); box-shadow:var(--shadow-2);
+  }
+  .masthead.open .mainnav a{ padding:15px var(--gut); font-size:14px }
+  .masthead.open .mainnav a::after{ display:none }
+  .masthead.open .mainnav a[aria-current="page"]{
+    border-left:3px solid var(--force-blue); background:var(--bg-alt);
+  }
+  .mast-actions{ margin-left:12px }
+  .foot-cols{ grid-template-columns:repeat(2,1fr) }
+  .split{ grid-template-columns:1fr; gap:34px }
+  .prod-grid{ grid-template-columns:repeat(3,minmax(0,1fr)) }
+}
+@media (max-width:860px){
+  .g4{ grid-template-columns:repeat(2,1fr) }
+  .g3{ grid-template-columns:repeat(2,1fr) }
+  .prod-grid{ grid-template-columns:repeat(2,minmax(0,1fr)) }
+  .stats{ grid-template-columns:repeat(2,1fr) }
+  .utility .wrap{ gap:14px; overflow-x:auto }
+  .promo .inner{ padding:32px 26px }
+  .promo .promo-cta{ margin-left:0 }
+  .recap-games{ grid-template-columns:1fr }
+  .gamestrip.countdown-bar .wrap{
+    flex-wrap:wrap; gap:16px 22px; overflow-x:visible;
+  }
+  .gamestrip.countdown-bar .btn{ margin-left:0 }
+}
+@media (max-width:600px){
+  :root{ --gut:16px }
+  .g2,.g3,.g4{ grid-template-columns:1fr }
+  .foot-top .wrap{ flex-direction:column }
+  .foot-brand{ flex:1 1 auto }
+  .foot-cols{ grid-template-columns:1fr 1fr; width:100% }
+  .hero .wrap{ min-height:400px }
+  .masthead .wrap{ height:64px }
+  .brand img{ height:44px }
+  .brand .wordmark .name{ font-size:22px }
+  .mast-actions .btn:not(.btn-primary){ display:none }
+  .sec-head{ flex-wrap:wrap; gap:10px }
+  .sec-head .presented{ margin-left:0; width:100% }
+  .modal-scrim{ padding:0; align-items:flex-end }
+  .modal{ max-width:none; max-height:92vh; border-radius:3px 3px 0 0 }
+  .modal-head{ padding:20px 52px 18px 20px }
+  .modal-head h2{ font-size:24px }
+  .modal-body{ padding:18px 20px 22px }
+  .modal-foot{ padding:16px 20px }
+  .modal-foot .btn{ width:100% }
+  .modal-foot .spacer{ margin-left:0 }
+}
