@@ -753,6 +753,22 @@ def meta(body, key, default=""):
 ARTICLE_DIR = PAGES / "articles"
 
 
+def slugify(title, limit=62):
+    """Headline reduced to a URL path, trimmed at a word boundary."""
+    s = re.sub(r"&[a-z]+;", " ", _html.unescape(title).lower())
+    s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")
+    if len(s) > limit:
+        s = s[:limit].rsplit("-", 1)[0]
+    return s
+
+
+def article_slug(stem, title):
+    """Headline slug plus a short stable suffix, the way a large CMS builds them:
+    two stories that share a headline still land on different URLs. The suffix is
+    derived from the source filename, so a given article keeps its URL forever."""
+    return f"{slugify(title)}-{hashlib.sha1(stem.encode()).hexdigest()[:5]}"
+
+
 def load_articles():
     """Read pages/articles/*.html into a list of dicts, newest first."""
     arts = []
@@ -763,9 +779,9 @@ def load_articles():
         iso = meta(raw, "date")
         dt = datetime.date.fromisoformat(iso) if iso else datetime.date(1970, 1, 1)
         arts.append({
-            "slug": src.stem,
-            "file": f"news/{src.stem}.html",   # what gets written to disk
-            "url": f"news/{src.stem}",         # what links and canonical tags use
+            "slug": src.stem,                  # stable id; how bodies refer to it
+            "file": f"news/{article_slug(src.stem, meta(raw, 'title'))}.html",
+            "url": f"news/{article_slug(src.stem, meta(raw, 'title'))}",
             "title": meta(raw, "title"),
             "dek": meta(raw, "dek"),
             "date": dt,
@@ -937,6 +953,18 @@ def absolutise(html):
     return re.sub(r'\b(href|src)="(?!https?:|mailto:|#|/)([^"]+)"', r'\1="/\2"', html)
 
 
+_article_urls = {}
+
+
+def resolve_article_links(html):
+    """Page bodies refer to articles by their stable stem, as /news/<stem>.
+    Swap in the real headline-derived URL so the bodies never have to carry it."""
+    def sub(m):
+        target = _article_urls.get(m.group(1))
+        return f'href="/{target}{m.group(2)}"' if target else m.group(0)
+    return re.sub(r'href="/news/([a-z0-9-]+)((?:#[^"]*)?)"', sub, html)
+
+
 def write_page(name, html, source):
     """Write a generated page.
 
@@ -948,7 +976,7 @@ def write_page(name, html, source):
     """
     path = ROOT / name
     path.parent.mkdir(parents=True, exist_ok=True)
-    html = absolutise(html)
+    html = resolve_article_links(absolutise(html))
     banner = ("<!-- GENERATED FILE - do not edit.\n"
               "     Anything you change here is overwritten on the next build.\n"
               f"     Edit {source} instead, then run: python3 build.py -->\n")
@@ -987,6 +1015,7 @@ def build():
 
     load_manifest()
     arts = load_articles()
+    _article_urls.update({a["slug"]: a["url"] for a in arts})
     built = []
 
     # 1. Article pages
@@ -1114,7 +1143,8 @@ def build():
     #    the canonical location. Static hosting has no server-side redirects.
     for a in arts:
         target = f"/{a['url']}"
-        (ROOT / f"{a['slug']}.html").write_text(
+        for old in (f"{a['slug']}.html", f"news/{a['slug']}.html"):
+            (ROOT / old).write_text(
             f"""<!DOCTYPE html>
 <html lang="en">
 <head>
