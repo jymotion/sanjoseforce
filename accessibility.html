@@ -535,13 +535,20 @@
 
   function onKey(e) { if (e.key === 'Escape' || e.keyCode === 27) stop(); }
 
+  /* The cards launch from the top-right corner, so anything thrown rightward is
+     off screen before you can see it. Aim between straight down and 90 degrees
+     to the left, with a little room to the right of straight down. */
+  var AIM_LEFT = Math.PI / 2;
+  var AIM_RIGHT = -Math.PI / 12;
+
   function spawn() {
-    var dir = Math.random() < 0.5 ? -1 : 1;
+    var aim = AIM_RIGHT + Math.random() * (AIM_LEFT - AIM_RIGHT);
+    var speed = 4 + Math.random() * 8;
     cards.push({
       x: origin.x - CARD_W / 2,
       y: origin.y,
-      vx: dir * (2.5 + Math.random() * 6),
-      vy: -(3 + Math.random() * 6)
+      vx: -Math.sin(aim) * speed,
+      vy: Math.cos(aim) * speed
     });
     if (cards.length > 80) cards.shift();
   }
@@ -591,7 +598,7 @@
     window.addEventListener('resize', stop);
 
     spawn();
-    spawnTimer = setInterval(spawn, 240);
+    spawnTimer = setInterval(spawn, 264);
     frame();
   }
 
