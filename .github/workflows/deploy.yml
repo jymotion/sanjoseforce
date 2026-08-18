@@ -29,13 +29,25 @@ jobs:
       - name: Build the site
         run: python3 build.py
 
+      # Publish everything the build emits, minus the sources. Listing what to
+      # copy meant a new output directory silently went missing; listing what to
+      # leave behind fails safe instead.
       - name: Stage the publishable files
         run: |
           mkdir -p _site
-          cp *.html robots.txt sitemap.xml favicon.ico apple-touch-icon.png _site/
-          cp CNAME .nojekyll _site/
-          cp -r assets _site/assets
+          rsync -a ./ _site/ \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '_site' \
+            --exclude 'pages' \
+            --exclude 'build.py' \
+            --exclude 'serve.py' \
+            --exclude 'README.md' \
+            --exclude '__pycache__' \
+            --exclude '.build-manifest.json' \
+            --exclude '.build-backups'
           echo "staged $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
+          echo "news/ contains $(ls _site/news | wc -l) files"
 
       - uses: actions/upload-pages-artifact@v3
         with:
