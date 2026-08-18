@@ -45,37 +45,37 @@ def sponsor_tag(name):
 
 
 NAV = [
-    ("home",      "index.html",     "Home"),
-    ("schedule",  "schedule.html",  "Schedule"),
-    ("news",      "news.html",      "News"),
-    ("team",      "team.html",      "Team"),
-    ("stadium",   "stadium.html",   "Stadium"),
-    ("community", "community.html", "Community"),
+    ("home",      "/",         "Home"),
+    ("schedule",  "schedule",  "Schedule"),
+    ("news",      "news",      "News"),
+    ("team",      "team",      "Team"),
+    ("stadium",   "stadium",   "Stadium"),
+    ("community", "community", "Community"),
 ]
 
 FOOT_COLS = [
     ("Team", [
-        ("The Club", "team.html"), ("Roster", "team.html#roster"),
-        ("Coaches", "team.html#coaches"), ("Front Office", "team.html#front-office"),
-        ("Club History", "team.html#history"), ("Milestones", "team.html#milestones"),
-        ("Club Facts", "team.html#club-facts"),
+        ("The Club", "team"), ("Roster", "team#roster"),
+        ("Coaches", "team#coaches"), ("Front Office", "team#front-office"),
+        ("Club History", "team#history"), ("Milestones", "team#milestones"),
+        ("Club Facts", "team#club-facts"),
     ]),
     ("Game Day", [
-        ("Schedule", "schedule.html"), ("Stadium Info", "stadium.html"),
-        ("Parking", "stadium.html#parking"), ("Bag Policy", "stadium.html#bag-policy"),
-        ("Concessions Guide", "stadium.html#concessions"), ("A&ndash;Z Guide", "stadium.html#az"),
-        ("Accessibility", "stadium.html#accessibility"),
+        ("Schedule", "schedule"), ("Stadium Info", "stadium"),
+        ("Parking", "stadium#parking"), ("Bag Policy", "stadium#bag-policy"),
+        ("Concessions Guide", "stadium#concessions"), ("A&ndash;Z Guide", "stadium#az"),
+        ("Accessibility", "stadium#accessibility"),
     ]),
     ("Tickets", [
-        ("Season Tickets", "tickets.html#season"), ("Single Game Tickets", "tickets.html#single-game"),
-        ("Group Tickets", "tickets.html#groups"), ("Premium &amp; Suites", "tickets.html#premium"),
-        ("Account Manager", "tickets.html#ticketing"),
-        ("Ticketing Terms", "terms.html#ticketing-terms"),
+        ("Season Tickets", "tickets#season"), ("Single Game Tickets", "tickets#single-game"),
+        ("Group Tickets", "tickets#groups"), ("Premium &amp; Suites", "tickets#premium"),
+        ("Account Manager", "tickets#ticketing"),
+        ("Ticketing Terms", "terms#ticketing-terms"),
     ]),
     ("Fans &amp; Media", [
-        ("FORCE Nation", "community.html#force-nation"),
-        ("FORCE Foundation", "community.html#foundation"),
-        ("News", "news.html"),
+        ("FORCE Nation", "community#force-nation"),
+        ("FORCE Foundation", "community#foundation"),
+        ("News", "news"),
     ]),
 ]
 
@@ -476,7 +476,7 @@ def masthead(active):
 
 <header class="masthead">
   <div class="wrap">
-    <a class="brand" href="index.html">
+    <a class="brand" href="/">
       <img src="assets/img/logo.png" alt="San Jose FORCE">
       <span class="wordmark"><span class="city">San Jose</span><span class="name">FORCE</span></span>
     </a>
@@ -484,8 +484,8 @@ def masthead(active):
 {links}    </nav>
     <button class="mast-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
     <div class="mast-actions">
-      <a class="btn btn-ghost btn-sm" href="shop.html">Shop</a>
-      <a class="btn btn-primary btn-sm" href="tickets.html">Tickets</a>
+      <a class="btn btn-ghost btn-sm" href="shop">Shop</a>
+      <a class="btn btn-primary btn-sm" href="tickets">Tickets</a>
     </div>
   </div>
 </header>
@@ -514,7 +514,7 @@ def footer():
   <div class="foot-legal">
     <div class="wrap">
       <div class="links">
-        <a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a><a href="accessibility.html">Accessibility</a>
+        <a href="privacy">Privacy Policy</a><a href="terms">Terms of Use</a><a href="accessibility">Accessibility</a>
         <a href="#" data-modal="cookie-modal">Cookie Settings</a><a href="#" data-modal="adchoices-modal">Ad Choices</a>
       </div>
       <p class="fine">
@@ -608,7 +608,7 @@ def footer():
       </div>
 
       <p style="margin-top:18px">For more information about how the club handles your data, see our
-      <a href="privacy.html">Privacy Policy</a>.</p>
+      <a href="privacy">Privacy Policy</a>.</p>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" type="button" data-modal-close>Reject All</button>
@@ -653,7 +653,7 @@ def footer():
       <p style="margin-top:18px">Opting out of interest-based advertising does not opt you out of
       club communications. To manage the email and mobile messages you receive from the FORCE, visit
       your account settings. For details on the categories of data we collect and how they are used,
-      see our <a href="privacy.html">Privacy Policy</a> and
+      see our <a href="privacy">Privacy Policy</a> and
       <a href="#" data-modal="cookie-modal">Cookie Settings</a>.</p>
     </div>
     <div class="modal-foot">
@@ -750,7 +750,8 @@ def load_articles():
         dt = datetime.date.fromisoformat(iso) if iso else datetime.date(1970, 1, 1)
         arts.append({
             "slug": src.stem,
-            "url": src.stem + ".html",
+            "file": src.stem + ".html",   # what gets written to disk
+            "url": src.stem,              # what every link and canonical uses
             "title": meta(raw, "title"),
             "dek": meta(raw, "dek"),
             "date": dt,
@@ -874,7 +875,7 @@ def article_page(a, arts):
             <div style="font-family:var(--hd);font-size:38px;font-weight:800;text-transform:uppercase;margin:12px 0 4px">8&ndash;6</div>
             <div style="font-size:13px;color:var(--ink-2)">Schmeague Championship Runner-Up</div>
             <div style="font-size:13px;color:var(--ink-3);margin-bottom:16px">First postseason berth in club history</div>
-            <a class="btn btn-primary" href="schedule.html" style="width:100%">Full Results</a>
+            <a class="btn btn-primary" href="schedule" style="width:100%">Full Results</a>
           </div>
         </div>
 
@@ -895,7 +896,7 @@ def article_page(a, arts):
     <div class="sec-head">
       <h2>More FORCE News</h2>
       <div class="presented"><span>Presented by</span>{sponsor_tag('Franklin Mutual')}</div>
-      <a class="more" href="news.html">All News &rsaquo;</a>
+      <a class="more" href="news">All News &rsaquo;</a>
     </div>
     <div class="grid g4">
 {more}
@@ -918,8 +919,8 @@ def build():
                     path=a["url"], image=f"assets/img/{a['image']}-hero.jpg",
                     og_type="article")
                + masthead("news") + article_page(a, arts) + footer())
-        (ROOT / a["url"]).write_text(tune_images(out), encoding="utf-8")
-        built.append(a["url"])
+        (ROOT / a["file"]).write_text(tune_images(out), encoding="utf-8")
+        built.append(a["file"])
 
     # 2. Section pages. Tokens let a page pull in the live article list.
     top = arts[0] if arts else None
@@ -956,13 +957,14 @@ def build():
         if "{{HOME_MORE}}" in content:
             # Fill the rail with the newest stories the page does not already
             # link to, so the curated sections below never appear twice.
-            shown = set(re.findall(r'href="([a-z0-9-]+)\.html"', content))
+            shown = set(re.findall(r'href="([a-z0-9-]+)"', content))
             rest = [a for a in arts if a["slug"] not in shown]
             content = content.replace("{{HOME_MORE}}",
                                       "\n".join(headline_li(a) for a in rest[:7]))
         # Use the page's own header image for the share card when it has one.
         bg = re.search(r'<img class="bg" src="(assets/img/[\w.-]+)"', content)
-        out = (head(title, desc, path=f"{name}.html", image=bg.group(1) if bg else "")
+        out = (head(title, desc, path="" if name == "index" else name,
+                    image=bg.group(1) if bg else "")
                + masthead(nav) + "\n" + content + "\n" + footer())
         (ROOT / f"{name}.html").write_text(tune_images(out), encoding="utf-8")
         built.append(f"{name}.html")
@@ -984,11 +986,11 @@ def build():
   <div class="wrap">
     <div class="sec-head"><h2>Try One of These</h2></div>
     <ul class="headlines" style="max-width:640px">
-      <li><a href="index.html"><h4>Home</h4><div class="meta">The latest from the club</div></a></li>
-      <li><a href="news.html"><h4>News</h4><div class="meta">Official club announcements</div></a></li>
-      <li><a href="schedule.html"><h4>Schedule</h4><div class="meta">Results and fixtures</div></a></li>
-      <li><a href="tickets.html"><h4>Tickets</h4><div class="meta">2026 season and single game tickets</div></a></li>
-      <li><a href="stadium.html"><h4>General Electric Field</h4><div class="meta">Plan your visit</div></a></li>
+      <li><a href="/"><h4>Home</h4><div class="meta">The latest from the club</div></a></li>
+      <li><a href="news"><h4>News</h4><div class="meta">Official club announcements</div></a></li>
+      <li><a href="schedule"><h4>Schedule</h4><div class="meta">Results and fixtures</div></a></li>
+      <li><a href="tickets"><h4>Tickets</h4><div class="meta">2026 season and single game tickets</div></a></li>
+      <li><a href="stadium"><h4>General Electric Field</h4><div class="meta">Plan your visit</div></a></li>
     </ul>
   </div>
 </section>
@@ -1004,8 +1006,9 @@ def build():
     urls = []
     for name in sorted(built):
         # the homepage is the bare origin; articles carry their publication date
-        loc = f"{SITE_URL}/" if name == "index.html" else f"{SITE_URL}/{name}"
-        art = next((a for a in arts if a["url"] == name), None)
+        slug = name[:-5]                       # drop the .html
+        loc = f"{SITE_URL}/" if slug == "index" else f"{SITE_URL}/{slug}"
+        art = next((a for a in arts if a["file"] == name), None)
         lastmod = art["date"].isoformat() if art else today
         priority = "1.0" if name == "index.html" else ("0.8" if art else "0.7")
         urls.append(f"  <url>\n    <loc>{loc}</loc>\n    <lastmod>{lastmod}</lastmod>\n"
