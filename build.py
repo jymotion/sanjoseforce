@@ -411,7 +411,7 @@ SCRIPT = """
 def share_row(a):
     """Real share intents. These open the platform's compose window with the
     link prefilled — they need no club account on any of these services."""
-    url = f"{SITE_URL}/{a['url']}"
+    url = short_url(a)
     title = _html.unescape(a["title"])
     u, t = quote(url, safe=""), quote(title, safe="")
     subject = quote(title, safe="")
@@ -1017,6 +1017,8 @@ SHORT_DIR = ROOT.parent / "sjf-social"
 SHORT_HOST = "sjf.social"
 _B62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+_short_codes = {}                       # stem -> code, assigned once per build
+
 
 def short_code(stem, length=4):
     """Deterministic from the article's stem, so a code never changes once minted."""
@@ -1026,6 +1028,26 @@ def short_code(stem, length=4):
         out = _B62[value % 62] + out
         value //= 62
     return out
+
+
+def assign_short_codes(arts):
+    """Give every article a code, widening only where two would collide."""
+    taken = {}
+    for a in arts:
+        length = 4
+        code = short_code(a["slug"], length)
+        while code in taken and taken[code] != a["slug"]:
+            length += 1
+            code = short_code(a["slug"], length)
+        taken[code] = a["slug"]
+        _short_codes[a["slug"]] = code
+    return _short_codes
+
+
+def short_url(a):
+    """The sjf.social link for an article, or the canonical URL if it has no code."""
+    code = _short_codes.get(a["slug"])
+    return f"https://{SHORT_HOST}/{code}" if code else f"{SITE_URL}/{a['url']}"
 
 
 def redirect_html(target, note):
@@ -1048,15 +1070,7 @@ def build_shortlinks(arts):
     if not SHORT_DIR.is_dir():
         return None
 
-    codes, taken = {}, {}
-    for a in arts:
-        length = 4
-        code = short_code(a["slug"], length)
-        while code in taken and taken[code] != a["slug"]:   # widen on collision
-            length += 1
-            code = short_code(a["slug"], length)
-        taken[code] = a["slug"]
-        codes[code] = a
+    codes = {_short_codes[a["slug"]]: a for a in arts}
 
     for code, a in codes.items():
         target = f"{SITE_URL}/{a['url']}"
@@ -1084,6 +1098,7 @@ def build():
     load_manifest()
     arts = load_articles()
     _article_urls.update({a["slug"]: a["url"] for a in arts})
+    assign_short_codes(arts)
     built = []
 
     # 1. Article pages
