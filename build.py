@@ -1009,6 +1009,74 @@ def save_manifest():
     MANIFEST.write_text(json.dumps(_manifest, indent=1, sort_keys=True) + "\n")
 
 
+# --- Short links -------------------------------------------------------------
+# sjf.social is a separate GitHub Pages repo holding nothing but redirect pages.
+# It is generated from this article list so a new story gets a code for free.
+
+SHORT_DIR = ROOT.parent / "sjf-social"
+SHORT_HOST = "sjf.social"
+_B62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+
+def short_code(stem, length=4):
+    """Deterministic from the article's stem, so a code never changes once minted."""
+    value = int(hashlib.sha1(("sjf:" + stem).encode()).hexdigest(), 16)
+    out = ""
+    for _ in range(length):
+        out = _B62[value % 62] + out
+        value //= 62
+    return out
+
+
+def redirect_html(target, note):
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>San Jose FORCE</title>
+<link rel="canonical" href="{target}">
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url={target}">
+<script>location.replace({json.dumps(target)});</script>
+</head>
+<body><p>{note} <a href="{target}">{target}</a></p></body>
+</html>
+"""
+
+
+def build_shortlinks(arts):
+    if not SHORT_DIR.is_dir():
+        return None
+
+    codes, taken = {}, {}
+    for a in arts:
+        length = 4
+        code = short_code(a["slug"], length)
+        while code in taken and taken[code] != a["slug"]:   # widen on collision
+            length += 1
+            code = short_code(a["slug"], length)
+        taken[code] = a["slug"]
+        codes[code] = a
+
+    for code, a in codes.items():
+        target = f"{SITE_URL}/{a['url']}"
+        (SHORT_DIR / f"{code}.html").write_text(
+            redirect_html(target, "Redirecting to"), encoding="utf-8")
+
+    (SHORT_DIR / "index.html").write_text(
+        redirect_html(SITE_URL + "/", "The official site of the San Jose FORCE:"), encoding="utf-8")
+    (SHORT_DIR / "404.html").write_text(
+        redirect_html(SITE_URL + "/news", "That link has expired. The latest club news:"),
+        encoding="utf-8")
+    (SHORT_DIR / "CNAME").write_text(SHORT_HOST + "\n", encoding="utf-8")
+    (SHORT_DIR / ".nojekyll").write_text("", encoding="utf-8")
+    (SHORT_DIR / "links.txt").write_text(
+        "".join(f"https://{SHORT_HOST}/{c}  ->  {SITE_URL}/{a['url']}\n"
+                for c, a in sorted(codes.items(), key=lambda kv: kv[1]["date"], reverse=True)),
+        encoding="utf-8")
+    return codes
+
+
 def build():
     if not PAGES.is_dir():
         raise SystemExit(f"no pages/ directory at {PAGES}")
@@ -1157,6 +1225,10 @@ def build():
 <body><p>This article has moved to <a href="{target}">{target}</a>.</p></body>
 </html>
 """, encoding="utf-8")
+
+    codes = build_shortlinks(arts)
+    if codes is not None:
+        print(f"  short links: {len(codes)} written to {SHORT_DIR.name}/")
 
     print(f"built {len(arts)} articles + {len(built) - len(arts)} section pages")
     print(f"  plus 404.html, robots.txt, sitemap.xml ({len(urls)} urls)")
