@@ -16,7 +16,9 @@ masthead, footer) and writes <name>.html to the site root.
 """
 
 import datetime
+import hashlib
 import html as _html
+import json
 import pathlib
 import re
 import struct
@@ -906,10 +908,60 @@ def article_page(a, arts):
 """
 
 
+MANIFEST = ROOT / ".build-manifest.json"
+BACKUPS = ROOT / ".build-backups"
+
+_manifest = {}
+_rescued = []
+
+
+def write_page(name, html, source):
+    """Write a generated page.
+
+    The HTML in the repo root is build output. Anyone can open it and edit it —
+    it is named exactly like the page it produces — so before overwriting, check
+    the file against the hash of what this script last wrote there. If it differs,
+    somebody edited the output by hand: keep a copy and say so loudly rather than
+    destroying their work.
+    """
+    path = ROOT / name
+    banner = ("<!-- GENERATED FILE - do not edit.\n"
+              "     Anything you change here is overwritten on the next build.\n"
+              f"     Edit {source} instead, then run: python3 build.py -->\n")
+    html = html.replace("<!DOCTYPE html>\n", "<!DOCTYPE html>\n" + banner, 1)
+    data = html.encode("utf-8")
+
+    previous = _manifest.get(name)
+    if previous and path.exists():
+        on_disk = hashlib.sha256(path.read_bytes()).hexdigest()
+        if on_disk != previous:
+            BACKUPS.mkdir(exist_ok=True)
+            stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+            kept = BACKUPS / f"{name}.{stamp}.bak"
+            kept.write_bytes(path.read_bytes())
+            _rescued.append((name, kept.relative_to(ROOT), source))
+
+    path.write_bytes(data)
+    _manifest[name] = hashlib.sha256(data).hexdigest()
+
+
+def load_manifest():
+    global _manifest
+    try:
+        _manifest = json.loads(MANIFEST.read_text())
+    except (OSError, ValueError):
+        _manifest = {}
+
+
+def save_manifest():
+    MANIFEST.write_text(json.dumps(_manifest, indent=1, sort_keys=True) + "\n")
+
+
 def build():
     if not PAGES.is_dir():
         raise SystemExit(f"no pages/ directory at {PAGES}")
 
+    load_manifest()
     arts = load_articles()
     built = []
 
@@ -919,7 +971,7 @@ def build():
                     path=a["url"], image=f"assets/img/{a['image']}-hero.jpg",
                     og_type="article")
                + masthead("news") + article_page(a, arts) + footer())
-        (ROOT / a["file"]).write_text(tune_images(out), encoding="utf-8")
+        write_page(a["file"], tune_images(out), f"pages/articles/{a['slug']}.html")
         built.append(a["file"])
 
     # 2. Section pages. Tokens let a page pull in the live article list.
@@ -966,7 +1018,7 @@ def build():
         out = (head(title, desc, path="" if name == "index" else name,
                     image=bg.group(1) if bg else "")
                + masthead(nav) + "\n" + content + "\n" + footer())
-        (ROOT / f"{name}.html").write_text(tune_images(out), encoding="utf-8")
+        write_page(f"{name}.html", tune_images(out), str(src.relative_to(ROOT)))
         built.append(f"{name}.html")
 
     # 3. A 404 page, reusing the chrome so a wrong URL still looks like the club.
@@ -996,7 +1048,7 @@ def build():
 </section>
 """
                 + footer())
-    (ROOT / "404.html").write_text(tune_images(notfound), encoding="utf-8")
+    write_page("404.html", tune_images(notfound), "build.py (the 404 block)")
 
     # 4. robots.txt + sitemap.xml, generated so they never fall behind the pages.
     (ROOT / "robots.txt").write_text(
@@ -1017,6 +1069,20 @@ def build():
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "\n".join(urls) + "\n</urlset>\n", encoding="utf-8")
+
+    save_manifest()
+
+    if _rescued:
+        print()
+        print("!" * 72)
+        print("Hand-edited output detected. Those files were NOT lost - a copy of each")
+        print("is saved below. Move your changes into the source file, then rebuild.")
+        for name, kept, source in _rescued:
+            print(f"  {name}")
+            print(f"      your version : {kept}")
+            print(f"      edit instead : {source}")
+        print("!" * 72)
+        print()
 
     print(f"built {len(arts)} articles + {len(built) - len(arts)} section pages")
     print(f"  plus 404.html, robots.txt, sitemap.xml ({len(urls)} urls)")
