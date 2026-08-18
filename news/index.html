@@ -507,11 +507,8 @@
   var CARD_W = 184, CARD_H = 238, GRAVITY = 0.45, BOUNCE = 0.82;
   /* Root-relative: article pages sit at /news/<slug>, and these paths are
      inside a script, so the build's link rewriting never sees them. */
-  var CARD_SRCS = [
-    '/assets/img/signin-card-1.jpg', '/assets/img/signin-card-2.jpg',
-    '/assets/img/signin-card-3.jpg', '/assets/img/signin-card-4.jpg',
-    '/assets/img/signin-card-5.jpg', '/assets/img/signin-card-6.jpg'
-  ];
+  var CARD_SRCS = ['/assets/img/signin-card-1.jpg', '/assets/img/signin-card-2.jpg',
+                  '/assets/img/signin-card-3.jpg'];
   var running = false, canvas, ctx, raf, spawnTimer;
   var sprites = null, activeSprite = null, loading = false;
   var cards = [], origin = { x: 0, y: 0 };
