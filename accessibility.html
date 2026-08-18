@@ -556,7 +556,11 @@
   function frame() {
     if (!running) return;
     var W = window.innerWidth, H = window.innerHeight;
-    for (var i = cards.length - 1; i >= 0; i--) {
+    /* Oldest first, so the newest card is painted last and lands on top.
+       Survivors are collected instead of spliced mid-loop, which would skip
+       entries while iterating forwards. */
+    var alive = [];
+    for (var i = 0; i < cards.length; i++) {
       var c = cards[i];
       c.vy += GRAVITY;
       c.x += c.vx;
@@ -568,8 +572,9 @@
         if (Math.abs(c.vy) < 2) c.vy = -(4 + Math.random() * 3);
       }
       ctx.drawImage(activeSprite, c.x, c.y, CARD_W, CARD_H);
-      if (c.x < -CARD_W * 2 || c.x > W + CARD_W * 2) cards.splice(i, 1);
+      if (c.x > -CARD_W * 2 && c.x < W + CARD_W * 2) alive.push(c);
     }
+    cards = alive;
     raf = requestAnimationFrame(frame);
   }
 
