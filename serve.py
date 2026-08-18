@@ -20,10 +20,14 @@ ROOT = pathlib.Path(__file__).parent
 class Handler(http.server.SimpleHTTPRequestHandler):
     def translate_path(self, path):
         local = pathlib.Path(super().translate_path(path))
+        if local.is_dir():
+            index = local / "index.html"
+            if index.is_file():
+                return str(index)
         if not local.exists() and not local.suffix:
-            candidate = local.with_suffix(".html")
-            if candidate.is_file():
-                return str(candidate)
+            for candidate in (local.with_suffix(".html"), local / "index.html"):
+                if candidate.is_file():
+                    return str(candidate)
         return str(local)
 
     def send_error(self, code, message=None, explain=None):

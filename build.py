@@ -752,8 +752,8 @@ def load_articles():
         dt = datetime.date.fromisoformat(iso) if iso else datetime.date(1970, 1, 1)
         arts.append({
             "slug": src.stem,
-            "file": src.stem + ".html",   # what gets written to disk
-            "url": src.stem,              # what every link and canonical uses
+            "file": f"news/{src.stem}.html",   # what gets written to disk
+            "url": f"news/{src.stem}",         # what links and canonical tags use
             "title": meta(raw, "title"),
             "dek": meta(raw, "dek"),
             "date": dt,
@@ -915,6 +915,16 @@ _manifest = {}
 _rescued = []
 
 
+def absolutise(html):
+    """Make internal links and asset paths root-relative.
+
+    Article pages live at /news/<slug>, so a relative "assets/img/x.jpg" would
+    resolve to /news/assets/... . The site always serves from the domain root,
+    so a leading slash is both correct and simpler than counting ../ levels.
+    """
+    return re.sub(r'\b(href|src)="(?!https?:|mailto:|#|/)([^"]+)"', r'\1="/\2"', html)
+
+
 def write_page(name, html, source):
     """Write a generated page.
 
@@ -925,6 +935,8 @@ def write_page(name, html, source):
     destroying their work.
     """
     path = ROOT / name
+    path.parent.mkdir(parents=True, exist_ok=True)
+    html = absolutise(html)
     banner = ("<!-- GENERATED FILE - do not edit.\n"
               "     Anything you change here is overwritten on the next build.\n"
               f"     Edit {source} instead, then run: python3 build.py -->\n")
@@ -1015,11 +1027,12 @@ def build():
                                       "\n".join(headline_li(a) for a in rest[:7]))
         # Use the page's own header image for the share card when it has one.
         bg = re.search(r'<img class="bg" src="(assets/img/[\w.-]+)"', content)
-        out = (head(title, desc, path="" if name == "index" else name,
-                    image=bg.group(1) if bg else "")
+        url = "" if name == "index" else name
+        out = (head(title, desc, path=url, image=bg.group(1) if bg else "")
                + masthead(nav) + "\n" + content + "\n" + footer())
-        write_page(f"{name}.html", tune_images(out), str(src.relative_to(ROOT)))
-        built.append(f"{name}.html")
+        outfile = "news/index.html" if name == "news" else f"{name}.html"
+        write_page(outfile, tune_images(out), str(src.relative_to(ROOT)))
+        built.append(outfile)
 
     # 3. A 404 page, reusing the chrome so a wrong URL still looks like the club.
     notfound = (head("Page Not Found | San Jose FORCE",
@@ -1058,7 +1071,7 @@ def build():
     urls = []
     for name in sorted(built):
         # the homepage is the bare origin; articles carry their publication date
-        slug = name[:-5]                       # drop the .html
+        slug = name[:-11] if name.endswith("/index.html") else name[:-5]
         loc = f"{SITE_URL}/" if slug == "index" else f"{SITE_URL}/{slug}"
         art = next((a for a in arts if a["file"] == name), None)
         lastmod = art["date"].isoformat() if art else today
@@ -1083,6 +1096,25 @@ def build():
             print(f"      edit instead : {source}")
         print("!" * 72)
         print()
+
+    # 5. The articles used to live at /<slug>. Anything already shared at an old
+    #    URL keeps working: a stub that redirects and points search engines at
+    #    the canonical location. Static hosting has no server-side redirects.
+    for a in arts:
+        target = f"/{a['url']}"
+        (ROOT / f"{a['slug']}.html").write_text(
+            f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{_html.escape(a['title'])} | San Jose FORCE</title>
+<link rel="canonical" href="{SITE_URL}{target}">
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url={target}">
+</head>
+<body><p>This article has moved to <a href="{target}">{target}</a>.</p></body>
+</html>
+""", encoding="utf-8")
 
     print(f"built {len(arts)} articles + {len(built) - len(arts)} section pages")
     print(f"  plus 404.html, robots.txt, sitemap.xml ({len(urls)} urls)")

@@ -6,49 +6,9 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sanjoseforce.com/article-ge-field</loc>
-    <lastmod>2024-11-24</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/buster-honor-roll</loc>
-    <lastmod>2025-12-12</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/championship-recap</loc>
-    <lastmod>2025-12-29</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://sanjoseforce.com/community</loc>
     <lastmod>2026-08-18</lastmod>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/concourse-renovation</loc>
-    <lastmod>2025-12-04</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/draft-strategy</loc>
-    <lastmod>2026-08-10</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/food-drive</loc>
-    <lastmod>2025-12-08</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/force-nation-25k</loc>
-    <lastmod>2025-12-23</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/hs-championship</loc>
-    <lastmod>2025-10-22</lastmod>
-    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sanjoseforce.com/</loc>
@@ -56,28 +16,98 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://sanjoseforce.com/news/article-ge-field</loc>
+    <lastmod>2024-11-24</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/buster-honor-roll</loc>
+    <lastmod>2025-12-12</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/championship-recap</loc>
+    <lastmod>2025-12-29</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/concourse-renovation</loc>
+    <lastmod>2025-12-04</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/draft-strategy</loc>
+    <lastmod>2026-08-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/food-drive</loc>
+    <lastmod>2025-12-08</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/force-nation-25k</loc>
+    <lastmod>2025-12-23</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/hs-championship</loc>
+    <lastmod>2025-10-22</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://sanjoseforce.com/news</loc>
     <lastmod>2026-08-18</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sanjoseforce.com/newsletter-november</loc>
+    <loc>https://sanjoseforce.com/news/newsletter-november</loc>
     <lastmod>2025-11-01</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://sanjoseforce.com/park-beautification</loc>
+    <loc>https://sanjoseforce.com/news/park-beautification</loc>
     <lastmod>2025-11-15</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://sanjoseforce.com/playoff-opener</loc>
+    <loc>https://sanjoseforce.com/news/playoff-opener</loc>
     <lastmod>2025-12-15</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://sanjoseforce.com/postseason-berth</loc>
+    <loc>https://sanjoseforce.com/news/postseason-berth</loc>
     <lastmod>2025-12-01</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/round-2-recap</loc>
+    <lastmod>2025-12-22</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/season-in-review</loc>
+    <lastmod>2025-12-30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/season-ticket-deposits</loc>
+    <lastmod>2025-12-26</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/sensory-support</loc>
+    <lastmod>2025-11-18</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/training-camp-opens</loc>
+    <lastmod>2026-08-13</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sanjoseforce.com/news/youth-clinics</loc>
+    <lastmod>2025-11-08</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
@@ -86,29 +116,9 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sanjoseforce.com/round-2-recap</loc>
-    <lastmod>2025-12-22</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://sanjoseforce.com/schedule</loc>
     <lastmod>2026-08-18</lastmod>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/season-in-review</loc>
-    <lastmod>2025-12-30</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/season-ticket-deposits</loc>
-    <lastmod>2025-12-26</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/sensory-support</loc>
-    <lastmod>2025-11-18</lastmod>
-    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sanjoseforce.com/shop</loc>
@@ -134,15 +144,5 @@
     <loc>https://sanjoseforce.com/tickets</loc>
     <lastmod>2026-08-18</lastmod>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/training-camp-opens</loc>
-    <lastmod>2026-08-13</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sanjoseforce.com/youth-clinics</loc>
-    <lastmod>2025-11-08</lastmod>
-    <priority>0.8</priority>
   </url>
 </urlset>
