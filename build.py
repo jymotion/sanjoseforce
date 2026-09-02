@@ -1157,13 +1157,19 @@ def build():
         desc = meta(body, "desc", "Official site of the San Jose FORCE.")
         nav = meta(body, "nav", "")
         content = re.sub(r"<!--(title|desc|nav):.*?-->\s*", "", body).strip()
+        hand_linked = {a["slug"] for a in arts
+                       if f'href="news/{a["slug"]}"' in content
+                       or f'href="{a["url"]}"' in content}
         for tok, val in tokens.items():
             content = content.replace(tok, val)
         if "{{HOME_MORE}}" in content:
-            # Fill the rail with the newest stories the page does not already
-            # link to, so the curated sections below never appear twice.
-            shown = set(re.findall(r'href="([a-z0-9-]+)"', content))
-            rest = [a for a in arts if a["slug"] not in shown]
+            # The rail carries what the page has not already given a card to:
+            # never the hero or the lead story, and never anything hand-linked
+            # in a curated section further down. Bodies may reference an article
+            # either by its stable stem or by its published URL, so check both.
+            featured = {a["slug"] for a in arts[:2]}   # the hero and the lead card
+            rest = [a for a in arts
+                    if a["slug"] not in featured and a["slug"] not in hand_linked]
             content = content.replace("{{HOME_MORE}}",
                                       "\n".join(headline_li(a) for a in rest[:7]))
         # Use the page's own header image for the share card when it has one.
