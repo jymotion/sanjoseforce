@@ -1167,7 +1167,9 @@ def build():
             # never the hero or the lead story, and never anything hand-linked
             # in a curated section further down. Bodies may reference an article
             # either by its stable stem or by its published URL, so check both.
-            featured = {a["slug"] for a in arts[:2]}   # the hero and the lead card
+            # Everything the page already gives a card to: the hero, the lead
+            # story and the two compact cards beside it.
+            featured = {a["slug"] for a in arts[:4]}
             rest = [a for a in arts
                     if a["slug"] not in featured and a["slug"] not in hand_linked]
             content = content.replace("{{HOME_MORE}}",
