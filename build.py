@@ -81,6 +81,18 @@ FOOT_COLS = [
     ]),
 ]
 
+# Section pages that do not sit at <name>.html in the site root. A page and a
+# directory of the same name would be ambiguous to resolve, so anything with
+# children lives at <name>/index.html.
+PAGE_PATHS = {
+    "news":          "news/index.html",
+    "schedule":      "schedule/index.html",
+    "schedule-2025": "schedule/2025.html",
+}
+PAGE_URLS = {
+    "schedule-2025": "schedule/2025",
+}
+
 SCRIPT = """
 <script>
 /* Mobile navigation drawer */
@@ -908,7 +920,7 @@ def article_page(a, arts):
             <div style="font-family:var(--hd);font-size:38px;font-weight:800;text-transform:uppercase;margin:12px 0 4px">8&ndash;6</div>
             <div style="font-size:13px;color:var(--ink-2)">Schmeague Championship Runner-Up</div>
             <div style="font-size:13px;color:var(--ink-3);margin-bottom:16px">First postseason berth in club history</div>
-            <a class="btn btn-primary" href="schedule" style="width:100%">Full Results</a>
+            <a class="btn btn-primary" href="schedule/2025" style="width:100%">Full Results</a>
           </div>
         </div>
 
@@ -1154,10 +1166,10 @@ def build():
                                       "\n".join(headline_li(a) for a in rest[:7]))
         # Use the page's own header image for the share card when it has one.
         bg = re.search(r'<img class="bg" src="(assets/img/[\w.-]+)"', content)
-        url = "" if name == "index" else name
+        url = PAGE_URLS.get(name, "" if name == "index" else name)
         out = (head(title, desc, path=url, image=bg.group(1) if bg else "")
                + masthead(nav) + "\n" + content + "\n" + footer())
-        outfile = "news/index.html" if name == "news" else f"{name}.html"
+        outfile = PAGE_PATHS.get(name, f"{name}.html")
         write_page(outfile, tune_images(out), str(src.relative_to(ROOT)))
         built.append(outfile)
 
