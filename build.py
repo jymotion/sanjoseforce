@@ -956,6 +956,7 @@ BACKUPS = ROOT / ".build-backups"
 
 _manifest = {}
 _rescued = []
+_written = set()
 
 
 def absolutise(html):
@@ -1010,6 +1011,7 @@ def write_page(name, html, source):
 
     path.write_bytes(data)
     _manifest[name] = hashlib.sha256(data).hexdigest()
+    _written.add(name)
 
 
 def load_manifest():
@@ -1242,6 +1244,7 @@ def build():
     for a in arts:
         target = f"/{a['url']}"
         for old in (f"{a['slug']}.html", f"news/{a['slug']}.html"):
+            _written.add(old)
             (ROOT / old).write_text(
             f"""<!DOCTYPE html>
 <html lang="en">
@@ -1259,6 +1262,18 @@ def build():
     codes = build_shortlinks(arts)
     if codes is not None:
         print(f"  short links: {len(codes)} written to {SHORT_DIR.name}/")
+
+    # A page renamed or removed leaves its old output behind, and a stale file
+    # beats a directory index when the host resolves a URL. Remove anything this
+    # build no longer produces.
+    for name in sorted(set(_manifest) - _written):
+        stale = ROOT / name
+        if stale.is_file():
+            stale.unlink()
+            print(f"  removed stale output: {name}")
+        _manifest.pop(name, None)
+
+    save_manifest()
 
     print(f"built {len(arts)} articles + {len(built) - len(arts)} section pages")
     print(f"  plus 404.html, robots.txt, sitemap.xml ({len(urls)} urls)")
