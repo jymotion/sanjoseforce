@@ -915,7 +915,7 @@ def home_hero(a):
     </div>
     <h1><a href="{a['url']}">{a['title']}</a></h1>
     <p class="dek">{a['dek']}</p>
-    <div class="byline">{a['long_date']} &middot; FORCE Communications</div>
+    <div class="byline">{a['long_date']} &middot; {a['author']}</div>
   </div>"""
 
 
