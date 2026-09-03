@@ -166,6 +166,7 @@ button{ font:inherit }
 
 /* ---------- Season recap ------------------------------------------------- */
 .recap-block{ display:grid; gap:1px; background:rgba(255,255,255,.16) }
+.recap-block > *{ min-width:0 }   /* same min-width:auto trap as .split */
 .recap-games{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px }
 .recap-game{ background:var(--force-navy); padding:20px 22px }
 .recap-game .gs-meta{ margin-bottom:11px }
@@ -329,7 +330,7 @@ button{ font:inherit }
 }
 
 /* ---------- Stat strip -------------------------------------------------- */
-.stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(255,255,255,.18) }
+.stats{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1px; background:rgba(255,255,255,.18) }
 .stats .stat{ background:var(--force-navy); padding:26px 20px; text-align:center }
 .stats .stat .v{
   font-family:var(--hd); font-size:46px; font-weight:800; line-height:1; color:var(--force-lime);
@@ -487,6 +488,7 @@ button{ font:inherit }
 .pill-blue{ background:rgba(1,117,162,.1); color:var(--force-blue) }
 .pill-green{ background:rgba(120,178,37,.16); color:#4b7715 }
 .pill-grey{ background:var(--bg-alt); color:var(--ink-2) }
+.pill-amber{ background:rgba(196,124,16,.14); color:#8a5606 }
 
 .notice{
   background:#fffbe6; border:1px solid #f0e2a8; border-left:4px solid var(--force-lime);
@@ -494,6 +496,10 @@ button{ font:inherit }
 }
 
 .split{ display:grid; grid-template-columns:2fr 1fr; gap:44px; align-items:start }
+/* Grid items default to min-width:auto, which stops a column shrinking below
+   its content. Without this a wide table pushes the whole page sideways
+   instead of scrolling inside its own .table-scroll. */
+.split > *{ min-width:0 }
 .sidebar h3{
   margin:0 0 14px; padding-bottom:11px; border-bottom:2px solid var(--ink);
   font-family:var(--hd); font-size:22px; font-weight:800; letter-spacing:.05em; text-transform:uppercase;
@@ -666,7 +672,7 @@ button{ font:inherit }
   .g4{ grid-template-columns:repeat(2,1fr) }
   .g3{ grid-template-columns:repeat(2,1fr) }
   .prod-grid{ grid-template-columns:repeat(2,minmax(0,1fr)) }
-  .stats{ grid-template-columns:repeat(2,1fr) }
+  .stats{ grid-template-columns:repeat(2,minmax(0,1fr)) }
   /* Utility bar: keep only the league mark and Sign In on small screens. */
   .utility .wrap{ gap:14px; overflow-x:visible }
   .utility a:not(.shield):not(:last-child){ display:none }
