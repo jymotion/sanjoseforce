@@ -423,6 +423,76 @@ SCRIPT = """
 """
 
 
+# --- 2026 season -------------------------------------------------------------
+# One source for the schedule table and the "Next Game" card, so the two cannot
+# drift apart. (week, opponent, is_home)
+SEASON_OPENER = datetime.date(2026, 9, 13)
+SEASON_2026 = [
+    (1,  "Onion Johns Burlap Sack", True),  (2,  "Daddy&rsquo;s Insight", False),
+    (3,  "The CEO", True),                  (4,  "Hungry Hungry Hippos", True),
+    (5,  "Bustin Lutz OG", False),          (6,  "Boutte Tuten", True),
+    (7,  "The ShTeinasty", False),          (8,  "Big Bob&rsquo;s Beepers", True),
+    (9,  "Da", True),                       (10, "Gould&rsquo;s Gold", False),
+    (11, "The Philly Fakeouts", True),      (12, "Onion Johns Burlap Sack", False),
+    (13, "Daddy&rsquo;s Insight", True),    (14, "The CEO", False),
+]
+
+
+def game_date(week):
+    return SEASON_OPENER + datetime.timedelta(days=7 * (week - 1))
+
+
+def next_game(today=None):
+    """The next fixture on or after today, or None once the season is done."""
+    today = today or datetime.date.today()
+    for week, opponent, home in SEASON_2026:
+        if game_date(week) >= today:
+            return week, opponent, home, game_date(week)
+    return None
+
+
+def schedule_rows():
+    out = []
+    for week, opponent, home in SEASON_2026:
+        d = game_date(week)
+        date = d.strftime("%a, %b ") + str(d.day)
+        tickets = ('<a class="pill pill-blue" href="tickets">Tickets</a>' if home else "&mdash;")
+        out.append(f'          <tr><td class="num">{week}</td><td>{date}</td>'
+                   f'<td>{"vs. " if home else "@ "}{opponent}</td>'
+                   f'<td>{"General Electric Field" if home else "Away"}</td>'
+                   f'<td class="num">{tickets}</td></tr>')
+    return "\n".join(out)
+
+
+def next_game_card():
+    """Sidebar module promoting the upcoming fixture."""
+    game = next_game()
+    if not game:
+        return """        <div class="sidebar">
+          <h3>2026 Season</h3>
+          <div style="border:1px solid var(--rule);border-radius:2px;padding:20px;text-align:center">
+            <div class="pill pill-grey">Season Complete</div>
+            <div style="font-size:13px;color:var(--ink-2);margin:12px 0 16px">Full results and postseason</div>
+            <a class="btn btn-primary" href="schedule" style="width:100%">Full Results</a>
+          </div>
+        </div>"""
+    week, opponent, home, d = game
+    long_date = d.strftime("%A, %B ") + str(d.day)
+    cta = ('<a class="btn btn-primary" href="tickets" style="width:100%">Get Tickets</a>' if home
+           else '<a class="btn btn-primary" href="schedule" style="width:100%">Full Schedule</a>')
+    return f"""        <div class="sidebar">
+          <h3>Next Game</h3>
+          <div style="border:1px solid var(--rule);border-radius:2px;padding:20px;text-align:center">
+            <div class="pill pill-blue">Week {week}</div>
+            <div style="font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin:14px 0 2px">{"vs." if home else "at"}</div>
+            <div style="font-family:var(--hd);font-size:27px;font-weight:800;text-transform:uppercase;line-height:1.05;letter-spacing:.02em">{opponent}</div>
+            <div style="font-size:13px;color:var(--ink-2);margin-top:8px">{long_date}</div>
+            <div style="font-size:13px;color:var(--ink-3);margin-bottom:16px">{"General Electric Field" if home else "Away"}</div>
+            {cta}
+          </div>
+        </div>"""
+
+
 def share_row(a):
     """Real share intents. These open the platform's compose window with the
     link prefilled — they need no club account on any of these services."""
@@ -913,16 +983,7 @@ def article_page(a, arts):
           </ul>
         </div>
 
-        <div class="sidebar">
-          <h3>2025 Season</h3>
-          <div style="border:1px solid var(--rule);border-radius:2px;padding:20px;text-align:center">
-            <div class="pill pill-blue">Final</div>
-            <div style="font-family:var(--hd);font-size:38px;font-weight:800;text-transform:uppercase;margin:12px 0 4px">8&ndash;6</div>
-            <div style="font-size:13px;color:var(--ink-2)">Schmeague Championship Runner-Up</div>
-            <div style="font-size:13px;color:var(--ink-3);margin-bottom:16px">First postseason berth in club history</div>
-            <a class="btn btn-primary" href="schedule/2025" style="width:100%">Full Results</a>
-          </div>
-        </div>
+{next_game_card()}
 
         <div class="sidebar">
           <h3>Media Inquiries</h3>
@@ -1145,6 +1206,7 @@ def build():
         "{{NEWS_ARCHIVE}}": "\n".join(headline_li(a) for a in arts[7:]),
         # Homepage. Everything below is derived from the same ordered list, so a
         # new article reorders the front page without anyone editing markup.
+        "{{SCHEDULE_ROWS}}": schedule_rows(),
         "{{HOME_HERO}}": home_hero(arts[0]) if arts else "",
         "{{HOME_LEAD}}": home_card(arts[1], lead=True) if len(arts) > 1 else "",
         "{{HOME_CARDS}}": "\n".join(home_card(a) for a in arts[2:4]),
