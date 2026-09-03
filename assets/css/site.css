@@ -494,6 +494,32 @@ button{ font:inherit }
   background:#fffbe6; border:1px solid #f0e2a8; border-left:4px solid var(--force-lime);
   padding:15px 18px; font-size:13.5px; line-height:1.55; color:#5b4f16; border-radius:2px;
 }
+/* Neutral variant, for editorial notices rather than club announcements. */
+.notice.neutral{
+  background:var(--bg-alt); border:1px solid var(--rule); border-left:4px solid var(--ink-3);
+  color:var(--ink-2);
+}
+
+/* ---------- Author bio -------------------------------------------------- */
+.author-bio{
+  display:flex; gap:20px; align-items:flex-start; margin:36px 0 0;
+  padding:24px 0 0; border-top:2px solid var(--ink);
+}
+.author-bio img{
+  width:86px; height:86px; flex:0 0 auto; border-radius:50%; object-fit:cover;
+}
+.author-bio .who{
+  margin:0 0 2px; font-family:var(--hd); font-size:24px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.03em; line-height:1;
+}
+.author-bio .role{
+  margin:0 0 10px; font-size:11px; font-weight:800; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-3);
+}
+.author-bio p{ margin:0; font-size:14.5px; line-height:1.62; color:var(--ink-2) }
+@media (max-width:600px){
+  .author-bio{ flex-direction:column; gap:14px }
+}
 
 .split{ display:grid; grid-template-columns:2fr 1fr; gap:44px; align-items:start }
 /* Grid items default to min-width:auto, which stops a column shrinking below

@@ -875,8 +875,9 @@ def load_articles():
             "category": meta(raw, "category", "Club News"),
             "image": meta(raw, "image", src.stem),
             "sponsor": meta(raw, "sponsor", "Franklin Mutual"),
+            "author": meta(raw, "author", "FORCE Communications"),
             "tag": meta(raw, "tag", ""),
-            "body": re.sub(r"<!--(title|dek|date|category|image|sponsor|tag):.*?-->\s*",
+            "body": re.sub(r"<!--(title|dek|date|category|image|sponsor|tag|author):.*?-->\s*",
                            "", raw).strip(),
         })
     arts.sort(key=lambda a: (a["date"], a["slug"]), reverse=True)
@@ -959,7 +960,7 @@ def article_page(a, arts):
     <h1 style="max-width:24ch">{a['title']}</h1>
     <p style="max-width:70ch">{a['dek']}</p>
     <div class="byline" style="margin-top:24px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.62)">
-      {a['long_date']} &middot; FORCE Communications
+      {a['long_date']} &middot; {a['author']}
     </div>
   </div>
 </section>
