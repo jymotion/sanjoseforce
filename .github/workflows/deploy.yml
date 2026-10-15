@@ -43,6 +43,7 @@ jobs:
             --exclude 'build.py' \
             --exclude 'serve.py' \
             --exclude 'README.md' \
+            --exclude 'CLAUDE.md' \
             --exclude '__pycache__' \
             --exclude '.build-manifest.json' \
             --exclude '.build-backups'
