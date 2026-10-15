@@ -4,30 +4,35 @@ Static club site for the **San Jose FORCE**, a fantasy football team in the Schm
 Built to match the standard NFL club-site template — same page furniture, same module rhythm,
 same relentless "presented by" placement.
 
+Live at **https://sanjoseforce.com**, published from this repo by GitHub Pages.
+
 ## Viewing it
 
-Open `index.html` in a browser. No build step or server is required.
-
-For a local server (nicer URLs, avoids any `file://` quirks):
-
 ```bash
-python3 -m http.server 8000 --directory /home/kevin/sync/claude/code/sanjoseforce
+python3 serve.py
 ```
 
 Then visit http://localhost:8000
 
+Use `serve.py`, not `python3 -m http.server`, and don't open the files directly. Every link
+on the site is extensionless (`/schedule`, `/news/<slug>`), which is how GitHub Pages serves
+them; only `serve.py` resolves those locally. It also serves `404.html` with a real 404.
+
 ## Pages
 
-| File | What it is |
+| URL | What it is |
 | --- | --- |
-| `index.html` | Homepage — hero, season countdown, headlines, promo, 2025 recap, community, mission |
-| 16 article pages | Every news headline is a real article — see **News articles** below |
-| `news.html` | News landing — top story, latest grid and archive, all auto-generated |
-| `schedule.html` | Full 2025 results, postseason, season splits, final league standings |
-| `team.html` | Club overview, coaching staff / front office, club facts, history |
-| `stadium.html` | General Electric Field — plan your visit, bag policy, A–Z guide |
-| `community.html` | FORCE Nation, FORCE Foundation, Buster, Kids Club, FAQ |
-| `tickets.html` | Ticket options, 2026 pricing table, ticketing FAQ |
+| `/` | Homepage — hero, season countdown, headlines, promo, 2025 recap, community, mission |
+| `/news` | News landing — top story, latest grid and archive, all auto-generated |
+| `/news/<slug>` | 20 article pages — see **News articles** below |
+| `/schedule` | 2026 season — fourteen games, postseason, opponent frequency |
+| `/schedule/2025` | Archived 2025 results, season splits, final league standings |
+| `/team` | Club overview, coaching staff / front office, club facts, history |
+| `/stadium` | General Electric Field — plan your visit, bag policy, A–Z guide |
+| `/community` | FORCE Nation, FORCE Foundation, Buster, FAQ |
+| `/tickets` | Ticket options, 2026 pricing table, ticketing FAQ |
+| `/shop` | Team Shop |
+| `/accessibility`, `/privacy`, `/terms` | Legal and accessibility statements |
 
 ## News articles
 
@@ -40,27 +45,36 @@ metadata comments:
 <!--date: 2025-12-29-->
 <!--category: Game Recap-->
 <!--image: news-championship-recap-->
-<!--sponsor: Clearwater Bottling Co.-->
+<!--sponsor: Franklin Mutual-->
 <!--tag: green-->
+<!--author: Stu Baker-->
 ```
 
 `build.py` wraps each one in the full article furniture — hero, byline, sidebar, related
-list, "More FORCE News" grid — and writes `<slug>.html`. Adding a new file to that folder is
-all it takes; **the news index updates itself**. `news.body.html` contains three tokens the
-builder fills from the article list, newest first:
+list, "More FORCE News" grid. Adding a new file to that folder is all it takes; **the news
+index and the homepage update themselves**. `news.body.html` and `index.body.html` contain
+tokens the builder fills from the article list, newest first:
 
 | Token | Fills |
 | --- | --- |
 | `{{NEWS_TOP}}` | Top story promo — the single newest article |
 | `{{NEWS_CARDS}}` | Latest News grid — articles 2 through 7 |
 | `{{NEWS_ARCHIVE}}` | News Archive list — everything older |
+| `{{HOME_HERO}}` | Homepage hero — the newest article |
+| `{{HOME_LEAD}}` | Lead card beneath it |
+| `{{HOME_CARDS}}` | The two compact cards |
+| `{{HOME_MORE}}` | More News rail — skips anything already carded above |
 
 `image` names a pair in `assets/img/`: `<name>.jpg` (1280×720 card) and `<name>-hero.jpg`
 (2000×900 page header). `tag` sets the card label colour — blank for blue, `green`, or
-`lime`.
+`lime`. `author` is optional and defaults to `FORCE Communications`; set it for guest pieces.
 
 Sort order is by date descending, so dates control placement. Two articles on the same date
 tie-break by slug; give them distinct dates if the order matters.
+
+Published articles live at `/news/<headline-slug>-<suffix>`. The suffix is derived from the
+**filename**, not the headline, so an article keeps its URL even if you rewrite the title.
+Older URL shapes keep working through generated redirect stubs.
 
 ## Editing
 
@@ -71,7 +85,10 @@ masthead, footer) is defined **once** in `build.py`. After editing anything, reb
 python3 build.py
 ```
 
-That regenerates every `<name>.html` in the site root.
+**Never edit the HTML in the repo root** — it is build output and will be overwritten. If
+you do it by accident, the build notices: it saves your version into `.build-backups/` and
+prints a warning rather than destroying it. Every generated file opens with a banner naming
+the source you should have edited instead.
 
 Each body file starts with three metadata comments the builder reads:
 
@@ -83,6 +100,19 @@ Each body file starts with three metadata comments the builder reads:
 
 `nav` marks which top-nav item gets the current-page underline. Leave it empty for pages
 that aren't in the nav (e.g. tickets).
+
+## Publishing
+
+```bash
+python3 build.py && git add -A && git commit -m "…" && git push
+```
+
+A GitHub Actions workflow rebuilds and deploys to GitHub Pages. Allow one to five minutes.
+
+The share buttons on every article point at **sjf.social**, a link shortener living in the
+sibling `../sjf-social` repo. `build.py` generates it at the same time, so a new article
+means committing and pushing **two repos**. Codes derive from the article filename and never
+change.
 
 ## Brand
 
@@ -112,45 +142,50 @@ The championship result does the same work. The club calls 2025 "a historic seas
 "the most successful in club history," which it was — while the game strip directly above
 reads 80.22 to 149.88. The site never connects the two.
 
+The one exception is signposted: the draft grades article runs as a guest opinion piece by
+Stu Baker, with a neutral disclaimer at the top and a bio at the foot. That framing is what
+lets it be blunt about rival clubs without the FORCE saying it.
+
 ## What is real vs. invented
 
 **Real, do not alter without new data:** the 2025 schedule, every score, the 8–6 record,
-the postseason run, and all twelve club names and their final records. Final standings are
-derived from your schedule and balance exactly at 84–84.
+the postseason run, the 2026 schedule, draft results and trades, and all twelve club names.
+Final standings are derived from the schedule and balance exactly at 84–84.
 
 **Invented, safe to edit freely:** sponsors, General Electric Field details, community
-programs, Buster, ticket pricing, front office titles.
+programs, Buster, ticket pricing, coaching and front office names.
 
-**Deliberately absent:** there is no roster, no depth chart, no transactions log and no
-injury reporting anywhere on the site, because inventing players would put false
-information into the bit. The Team page instead carries an in-character offseason notice
-that the 2026 roster will be announced after the draft. When you know your roster, that
-block in `pages/team.body.html` is where it goes — `.roster-grid` and `.player` styles are
-still in the stylesheet, ready to use.
+**Deliberately absent:** there is no roster, no depth chart and no injury reporting, because
+inventing players would put false information into the bit. Individual players appear only
+where you have supplied them — the Burrow trade and the draft grades. The Team page carries
+an in-character notice that the 2026 roster will be published when camp closes; that block
+in `pages/team.body.html` is where a real roster goes.
 
-**No divisions.** The Schmeague has twelve clubs and a randomized schedule. The
-footer lists all twelve as a flat league. Standings are league-wide, not divisional.
+**No divisions.** The Schmeague has twelve clubs and a randomized schedule. Standings are
+league-wide, not divisional.
 
 ## Season data
 
-Your real 2025 season: 8–6 regular season, 3–4 at home, 5–2 on the road, 1,400.62 points
-for, 1,346.52 against. Postseason 2–1 — wins over Throat Goats (147.06, the club's
-single-game high) and The Philly Fakeouts, then the championship loss to Bustin Lutz OG.
+The 2025 season: 8–6 regular season, 3–4 at home, 5–2 on the road, 1,400.62 points for,
+1,346.52 against. Postseason 2–1 — wins over Boutte Tuten (147.06, the club's single-game
+high) and The Philly Fakeouts, then the championship loss to Bustin Lutz OG.
 
-The site is set at **training camp, August 2026**. The 2025 season is the most recent
-completed one, recapped on the homepage and in full on `schedule.html`. Week dates map to
-the real Sunday calendar: Week 1 on September 7 2025, the championship on December 28. The
-GE announcement stays dated November 24 2024 and lives in the news archive, the stadium
-page and its own article page. The homepage counts down to the **September 9 2026 opener,
-8:20 PM ET**.
+2025 week dates map to the real Sunday calendar: Week 1 on September 7 2025, the
+championship on December 28. The GE announcement stays dated November 24 2024.
 
-If you move the site's "now" again, the things that go stale are: the Team page roster
-notice, the Tickets on-sale language, and the countdown target in `pages/index.body.html`.
+The 2026 schedule lives as data in `SEASON_2026` in `build.py` — fourteen games from Sunday
+September 13, eight of them at General Electric Field. That one list feeds both the schedule
+table and the "Next Game" card in the article sidebar, which picks its fixture by comparing
+the build date against the schedule and so advances on its own each week.
+
+The homepage counts down to the **September 9 2026 opener, 8:20 PM ET**. If you move the
+site's "now", the things that go stale are the Team page roster notice, the Tickets on-sale
+language, and that countdown target in `pages/index.body.html`.
 
 ## Images
 
-All article imagery is real photography you supplied. Each article names an image pair via
-its `image:` field:
+All imagery is real photography you supplied. Each article names an image pair via its
+`image:` field:
 
 - `assets/img/<name>.jpg` — 1280×720 card thumbnail
 - `assets/img/<name>-hero.jpg` — 2000×900 page header
@@ -159,27 +194,18 @@ Both are cover-cropped from the source so they fill their frame without distorti
 one, regenerate that pair at those dimensions and keep the filenames — no markup changes
 needed.
 
-Section pages use `banner-*.jpg` for their page headers, cropped the same way. Every
-image on the site is now real photography — the abstract placeholders are gone.
+Section pages use `banner-*.jpg` for their page headers, cropped the same way.
+`assets/img/logo.png` is your club mark with the white background knocked out, and
+`assets/img/signin-card-*.jpg` are the three photos used by the Sign In easter egg.
 
-`assets/img/logo.png` is your original club mark with the white background knocked out.
-`assets/img/signin-card-*.jpg` are the two photos used by the Sign In easter egg.
-
-Article metadata is the single source of truth. The homepage hero, its lead card, the two
-cards beneath it and the More News rail are all generated from the article list at build
-time via the `{{HOME_*}}` tokens, exactly as the news index is. Adding an article or
-changing its date, photo or headline reorders the front page on the next build — there is
-no homepage markup to keep in sync.
-
-`build.py` also stamps every `<img>` with its intrinsic width and height (read from the
-file header, no dependencies) and adds `loading="lazy"` to everything below the fold, so
-neither is something to remember when adding markup.
+`build.py` stamps every `<img>` with its intrinsic width and height (read from the file
+header, no dependencies) and adds `loading="lazy"` to everything below the fold, so neither
+is something to remember when adding markup.
 
 ## Notes
 
-- Coaches and front office are listed by title only, since I don't know your league
-  personas. Tenure lines assume continuity since 2023 — bump them when the season rolls.
 - To change the nav, footer columns, or sponsor links, edit the lists near the top of
   `build.py` and rebuild. Sponsor URLs live in `SPONSOR_URLS`.
-- Video and Photo Gallery sections were removed pending real footage; the CSS for them is
-  kept and marked `RESERVED` in `site.css`. Same for the unused roster/player card styles.
+- Video and Photo Gallery sections were removed pending real footage.
+- `CLAUDE.md` holds the architectural detail — the build pipeline, URL scheme and the
+  rendering traps this codebase has hit. Neither it nor this file is published.
