@@ -46,6 +46,11 @@ file in shared chrome and writes HTML to the repo root.
 to `FORCE Communications`). Everything else — headline, byline, hero, share row, related
 list — is generated from those.
 
+`image` is optional. Omit it and the post uses `news-default` (a real club photo), so
+writing an article never depends on having a photo to hand — add the field later to swap in
+a specific one. Naming an image that is not in `assets/img/` **fails the build** rather than
+publishing a broken hero.
+
 Article URLs are `/news/<headline-slug>-<suffix>`. The suffix is five hex characters
 derived from the **source filename**, not from content or randomness, so an article keeps
 its URL forever even if the headline changes. Each article also gets redirect stubs at its

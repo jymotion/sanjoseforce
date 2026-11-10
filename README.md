@@ -65,8 +65,12 @@ tokens the builder fills from the article list, newest first:
 | `{{HOME_CARDS}}` | The two compact cards |
 | `{{HOME_MORE}}` | More News rail — skips anything already carded above |
 
-`image` names a pair in `assets/img/`: `<name>.jpg` (1280×720 card) and `<name>-hero.jpg`
-(2000×900 page header). `tag` sets the card label colour — blank for blue, `green`, or
+`image` is optional — leave it out and the post uses a generic club photo, which is what
+makes "write a post about X" work when you have no picture to hand. Add the field later to
+swap in a real one. If you name an image that isn't there, the build stops and tells you.
+
+When set, `image` names a pair in `assets/img/`: `<name>.jpg` (1280×720 card) and
+`<name>-hero.jpg` (2000×900 page header). `tag` sets the card label colour — blank for blue, `green`, or
 `lime`. `author` is optional and defaults to `FORCE Communications`; set it for guest pieces.
 
 Sort order is by date descending, so dates control placement. Two articles on the same date
