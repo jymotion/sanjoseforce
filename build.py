@@ -838,6 +838,11 @@ def meta(body, key, default=""):
 
 ARTICLE_DIR = PAGES / "articles"
 
+# A post that names no image gets this pair, so writing an article never
+# depends on having a photo to hand. Swap in a real one later by adding the
+# image field; nothing else changes.
+DEFAULT_IMAGE = "news-default"
+
 
 def slugify(title, limit=62):
     """Headline reduced to a URL path, trimmed at a word boundary."""
@@ -874,7 +879,7 @@ def load_articles():
             "long_date": dt.strftime("%B ") + str(dt.day) + dt.strftime(", %Y"),
             "short_date": dt.strftime("%b ") + str(dt.day),
             "category": meta(raw, "category", "Club News"),
-            "image": meta(raw, "image", src.stem),
+            "image": meta(raw, "image", DEFAULT_IMAGE),
             "sponsor": meta(raw, "sponsor", "Franklin Mutual"),
             "author": meta(raw, "author", "FORCE Communications"),
             "tag": meta(raw, "tag", ""),
@@ -1184,12 +1189,35 @@ def build_shortlinks(arts):
     return codes
 
 
+def check_images(arts):
+    """A named image that is not in assets/img would publish a broken hero, and
+    nothing downstream notices. Stop before anything is written."""
+    missing = []
+    for a in arts:
+        for path in (f"assets/img/{a['image']}.jpg", f"assets/img/{a['image']}-hero.jpg"):
+            if not (ROOT / path).is_file():
+                missing.append((a["slug"], path))
+    if not missing:
+        return
+    print()
+    print("!" * 72)
+    print("Missing article images. Nothing was built.")
+    for slug, path in missing:
+        print(f"  pages/articles/{slug}.html  ->  {path}")
+    print()
+    print("Add the file, or drop the image: line from the article to use the default")
+    print(f"pair ({DEFAULT_IMAGE}.jpg / {DEFAULT_IMAGE}-hero.jpg).")
+    print("!" * 72)
+    raise SystemExit(1)
+
+
 def build():
     if not PAGES.is_dir():
         raise SystemExit(f"no pages/ directory at {PAGES}")
 
     load_manifest()
     arts = load_articles()
+    check_images(arts)
     _article_urls.update({a["slug"]: a["url"] for a in arts})
     assign_short_codes(arts)
     built = []
