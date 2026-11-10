@@ -110,9 +110,14 @@ python3 build.py && git add -A && git commit -m "…" && git push
 A GitHub Actions workflow rebuilds and deploys to GitHub Pages. Allow one to five minutes.
 
 The share buttons on every article point at **sjf.social**, a link shortener living in the
-sibling `../sjf-social` repo. `build.py` generates it at the same time, so a new article
-means committing and pushing **two repos**. Codes derive from the article filename and never
-change.
+sibling `../sjf-social` repo. When that sibling is present `build.py` regenerates it too, so
+pushing both repos publishes everything at once. Codes derive from the article filename and
+never change.
+
+If you are working somewhere without that sibling checkout — a cloud session, a new machine
+— just push this repo. The shortener rebuilds itself from a scheduled workflow within about
+fifteen minutes, or immediately if you run **Actions → Refresh short links → Run workflow**
+on the `sjf-social` repo. The build will warn you when it has skipped the step.
 
 ## Brand
 

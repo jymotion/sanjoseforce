@@ -69,10 +69,20 @@ suffix in a body file.
 "Next Game" card in the article sidebar. The card picks the fixture by comparing the build
 date against the schedule, so it advances on its own each week.
 
-**Short links.** `build.py` also generates the sibling `../sjf-social` repo — one redirect
-page per article, served at sjf.social, used by every article's share buttons. Codes are
-derived from the article stem and never change. **A new article means pushing two repos.**
-If `../sjf-social` is missing the build still succeeds and silently skips this step.
+**Short links.** Every article's share buttons point at sjf.social, a shortener living in
+its own repo (`jymotion/sjf-social`) because GitHub Pages allows one custom domain per repo.
+`build.py` generates it into `../sjf-social` when that sibling exists, so locally a new
+article means committing and pushing **two repos**. Codes derive from the article filename
+and never change.
+
+When the sibling is absent — a cloud session, a fresh clone — the build prints a loud
+warning and skips it. That matters because `short_url()` still writes sjf.social links into
+the share buttons either way, so skipping silently would ship dead links.
+
+You do not have to fix that by hand. `sjf-social` carries a `refresh.yml` workflow that
+clones this repo, runs `build.py` with `SJF_SHORT_DIR` pointed at itself, and commits any
+new redirect pages. It runs every 15 minutes and on manual dispatch, needs no secrets, and
+means **pushing only this repo is enough** — the short link appears within the cron window.
 
 ### Post-processing in `write_page()`
 
