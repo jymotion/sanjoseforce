@@ -134,6 +134,10 @@ only appear in a browser:
 
 ## Deploying
 
+**Commit and push straight to `main`.** The owner wants every requested change live without
+a review step, and rolls back with `git revert` if needed. Do not work on a separate branch
+or open a pull request, even if a session was started on one.
+
 `git push` triggers `.github/workflows/deploy.yml`, which builds and publishes. The staging
 step copies the tree and **excludes** sources rather than listing what to include — listing
 inclusions silently dropped a whole new directory once. Anything that should not be public
