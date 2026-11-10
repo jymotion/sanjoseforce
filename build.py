@@ -19,6 +19,7 @@ import datetime
 import hashlib
 import html as _html
 import json
+import os
 import pathlib
 import re
 import struct
@@ -1092,8 +1093,11 @@ def save_manifest():
 # sjf.social is a separate GitHub Pages repo holding nothing but redirect pages.
 # It is generated from this article list so a new story gets a code for free.
 
-SHORT_DIR = ROOT.parent / "sjf-social"
+# Normally the sibling checkout; SJF_SHORT_DIR lets CI point it somewhere else so
+# the shortener can regenerate itself without this repo being checked out beside it.
+SHORT_DIR = pathlib.Path(os.environ.get("SJF_SHORT_DIR") or ROOT.parent / "sjf-social")
 SHORT_HOST = "sjf.social"
+SHORT_REPO = "https://github.com/jymotion/sjf-social.git"
 _B62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 _short_codes = {}                       # stem -> code, assigned once per build
@@ -1147,6 +1151,16 @@ def redirect_html(target, note):
 
 def build_shortlinks(arts):
     if not SHORT_DIR.is_dir():
+        print()
+        print("!" * 72)
+        print(f"No shortener checkout at {SHORT_DIR}")
+        print("Short links were NOT regenerated, but every article's share buttons still")
+        print(f"point at https://{SHORT_HOST}/<code>. Publishing now would ship dead links.")
+        print("Fix with either:")
+        print(f"  git clone {SHORT_REPO} {SHORT_DIR}")
+        print(f"  SJF_SHORT_DIR=/path/to/checkout python3 build.py")
+        print("!" * 72)
+        print()
         return None
 
     codes = {_short_codes[a["slug"]]: a for a in arts}
